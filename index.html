@@ -341,9 +341,10 @@
     <div id="notification">Copied to clipboard!</div>
 
     <script>
+        const notify = document.getElementById('notification');
+
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                const notify = document.getElementById('notification');
                 notify.style.display = 'block';
                 setTimeout(() => {
                     notify.style.display = 'none';
