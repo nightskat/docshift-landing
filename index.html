@@ -357,13 +357,19 @@
 
     <script>
         const notify = document.getElementById('notification');
+        let notifyTimeoutId;
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 notify.style.display = 'block';
-                setTimeout(() => {
+                if (notifyTimeoutId) {
+                    clearTimeout(notifyTimeoutId);
+                }
+                notifyTimeoutId = setTimeout(() => {
                     notify.style.display = 'none';
                 }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
             });
         }
     </script>
