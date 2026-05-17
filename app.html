@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <title>Akebi · Translate a .docx file</title>
-<meta name="description" content="Format-preserving DOCX translation in your browser. Bring your own LLM key.">
+<meta name="description" content="Format-preserving DOCX translation. Drop a file, get it back translated.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Akebi · Translate a .docx file">
-<meta property="og:description" content="Format-preserving DOCX translation in your browser. Bring your own LLM key.">
+<meta property="og:description" content="Format-preserving DOCX translation. Drop a file, get it back translated.">
 <meta property="og:url" content="https://akebi.pages.dev/app">
 <meta property="og:image" content="https://akebi.pages.dev/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Akebi · Translate a .docx file">
-<meta name="twitter:description" content="Format-preserving DOCX translation in your browser. Bring your own LLM key.">
+<meta name="twitter:description" content="Format-preserving DOCX translation. Drop a file, get it back translated.">
 <meta name="twitter:image" content="https://akebi.pages.dev/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,7 +68,7 @@ h2 { font-size: var(--display-md); }
 p { color: var(--ink-soft); }
 a { color: var(--shu); text-decoration: none; transition: color .2s; }
 a:hover { color: var(--shu-deep); text-decoration: underline; text-underline-offset: 3px; }
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible, summary:focus-visible {
   outline: 2px solid var(--shu);
   outline-offset: 2px;
 }
@@ -111,33 +111,14 @@ header.site nav { margin-left: auto; display: flex; gap: 1.25rem; }
 header.site nav a { color: var(--ink-soft); }
 
 /* page title */
-.title-block { margin-top: 2rem; }
+.title-block { margin-top: 2rem; margin-bottom: 2.5rem; }
 .title-block h1 { margin-bottom: 0.75rem; }
-.title-block .lede { font-size: var(--body-lg); color: var(--ink-soft); }
-.title-block .lede-vi {
-  display: block; margin-top: 0.25rem;
-  font-family: var(--font-display); font-style: italic;
-  font-size: var(--body); color: var(--ink-muted);
-}
 
-/* numbered field groups */
-.field-group {
-  margin-top: 3.5rem;
-  display: grid;
-  grid-template-columns: 4.5rem 1fr;
-  gap: 0;
-  align-items: start;
-}
-.field-group .numeral {
-  font-family: var(--font-display); font-style: italic; font-weight: 400;
-  font-size: 3rem; line-height: 1; color: var(--ink-muted);
-  user-select: none;
-}
-.field-group .content h2 { margin-bottom: 0.75rem; line-height: 1.1; }
-.field-group .content > p.caption { margin-bottom: 1rem; }
-@media (max-width: 640px) {
-  .field-group { grid-template-columns: 1fr; gap: 0.5rem; }
-  .field-group .numeral { font-size: 2rem; }
+.jp-subhead {
+  display: block; margin-top: -0.5rem; margin-bottom: 1rem;
+  font-family: var(--font-jp); font-weight: 400;
+  font-size: 0.825rem; color: var(--ink-muted);
+  letter-spacing: 0.15em;
 }
 
 /* form controls */
@@ -162,6 +143,13 @@ input[type="text"]:disabled, input[type="password"]:disabled, input[type="url"]:
 }
 select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a857a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.25rem; }
 
+.field-stack > * + * { margin-top: 1rem; }
+.sub-note { margin-top: 0.35rem; }
+.req {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-muted); font-weight: 400; margin-left: 0.5rem;
+}
+
 .key-row { display: flex; gap: 0.5rem; align-items: stretch; }
 .key-row input { flex: 1; }
 .icon-btn {
@@ -174,28 +162,6 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .checkbox-row { margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--ink-soft); }
 .checkbox-row input { width: 1rem; height: 1rem; accent-color: var(--shu); }
 .checkbox-row label { display: inline; margin: 0; cursor: pointer; }
-
-.field-stack > * + * { margin-top: 1rem; }
-.sub-note { margin-top: 0.35rem; }
-.jp-subhead {
-  display: block; margin-top: -0.5rem; margin-bottom: 1rem;
-  font-family: var(--font-jp); font-weight: 400;
-  font-size: 0.825rem; color: var(--ink-muted);
-  letter-spacing: 0.15em;
-}
-.hanko {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 1.5rem; height: 1.5rem;
-  background: var(--shu); color: var(--paper);
-  font-family: var(--font-jp); font-weight: 700;
-  font-size: 0.9rem; line-height: 1;
-  outline: 1px solid var(--paper); outline-offset: -3px;
-  vertical-align: middle;
-}
-.req {
-  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--ink-muted); font-weight: 400; margin-left: 0.5rem;
-}
 
 /* drop-zone */
 .drop-zone {
@@ -220,71 +186,95 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .drop-zone .file-name { font-weight: 600; color: var(--ink); font-size: var(--body-lg); }
 .drop-zone .file-size { color: var(--ink-muted); font-size: 0.875rem; margin-top: 0.25rem; }
 
-/* submit row */
-.submit-row {
-  margin-top: 3rem;
+.lang-row { margin-top: 1.5rem; }
+
+/* primary action: Turnstile + Translate button */
+.primary-action {
+  margin-top: 2rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  align-items: flex-start;
+}
+#turnstile-mount { min-height: 65px; }
+#turnstile-mount.is-hidden { min-height: 0; }
+.btn-primary {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 1.75rem; color: var(--shu);
+  transition: color .15s;
+}
+.btn-primary::after { content: " →"; transition: margin-left .2s; display: inline-block; }
+.btn-primary:hover:not(:disabled) { color: var(--shu-deep); }
+.btn-primary:hover:not(:disabled)::after { margin-left: 0.25rem; }
+.btn-primary:disabled { color: var(--ink-muted); cursor: not-allowed; }
+.btn-primary:disabled::after { content: " ⋯"; }
+
+.primary-note {
+  font-size: var(--caption); color: var(--ink-muted);
+  margin-top: 0.25rem;
+}
+
+/* BYOK collapsible */
+.byok-section {
+  margin-top: 3.5rem;
   padding-top: 2rem;
   border-top: var(--hairline);
-  display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap;
 }
-.submit-row .text-btn {
+.byok-section summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex; align-items: baseline; gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+.byok-section summary::-webkit-details-marker { display: none; }
+.byok-section summary::before {
+  content: "▸";
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  display: inline-block;
+  transition: transform .2s;
+}
+.byok-section[open] summary::before { transform: rotate(90deg); }
+.byok-section .byok-title {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 1.25rem; color: var(--ink);
+}
+.byok-section .byok-tagline {
+  font-size: 0.875rem; color: var(--ink-muted);
+}
+.byok-body {
+  margin-top: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--paper-soft);
+}
+.byok-body p.byok-pitch {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem; color: var(--ink-soft);
+}
+.byok-body p.byok-pitch a { text-decoration: underline; text-underline-offset: 3px; }
+.byok-actions {
+  margin-top: 1.5rem;
+  display: flex; align-items: baseline; gap: 1.25rem; flex-wrap: wrap;
+}
+.byok-actions .btn-secondary {
   background: none; border: none; padding: 0; cursor: pointer;
-  font-family: inherit;
-}
-.submit-row .submit {
   font-family: var(--font-display); font-style: italic; font-weight: 400;
-  font-size: 1.5rem; color: var(--shu);
+  font-size: 1.15rem; color: var(--shu);
   transition: color .15s;
 }
-.submit-row .submit:hover { color: var(--shu-deep); }
-.submit-row .submit::after { content: " →"; transition: margin-left .2s; display: inline-block; }
-.submit-row .submit:hover::after { margin-left: 0.25rem; }
-.submit-row .submit:disabled { color: var(--ink-muted); cursor: not-allowed; }
-.submit-row .submit:disabled::after { content: " ⋯"; }
-.submit-row .secondary {
+.byok-actions .btn-secondary::after { content: " →"; transition: margin-left .2s; display: inline-block; }
+.byok-actions .btn-secondary:hover:not(:disabled) { color: var(--shu-deep); }
+.byok-actions .btn-secondary:hover:not(:disabled)::after { margin-left: 0.2rem; }
+.byok-actions .btn-secondary:disabled { color: var(--ink-muted); cursor: not-allowed; }
+.cancel-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
   font-size: 0.875rem; color: var(--ink-muted);
   text-decoration: underline; text-underline-offset: 3px;
+  font-family: inherit;
 }
-.submit-row .secondary:hover { color: var(--ink); }
-.submit-note { margin-top: 0.75rem; font-size: var(--caption); color: var(--ink-muted); max-width: 36rem; }
+.cancel-btn:hover { color: var(--ink); }
 
-/* demo strip — quick try, no key */
-.demo-strip {
-  margin-top: 2rem;
-  padding: 1rem 1.25rem;
-  background: var(--paper-soft);
-  border-left: 2px solid var(--shu);
-}
-.demo-strip .demo-row {
-  display: flex; align-items: baseline; justify-content: space-between;
-  flex-wrap: wrap; gap: 0.75rem;
-}
-.demo-strip .demo-flow {
-  margin-top: 0.85rem;
-  padding-top: 0.85rem;
-  border-top: 1px dashed var(--rule);
-}
-.demo-strip .demo-flow p.caption { margin-bottom: 0.5rem; }
-.demo-strip .demo-flow #turnstile-widget { min-height: 65px; }
-.demo-strip .demo-msg {
-  font-size: 0.9rem; color: var(--ink-soft); margin: 0;
-}
-.demo-strip .demo-msg em { color: var(--ink); margin-right: 0.3rem; }
-.demo-strip .demo-btn {
-  background: none; border: none; padding: 0; cursor: pointer;
-  font-family: var(--font-display); font-style: italic;
-  font-size: 1.1rem; color: var(--shu);
-  transition: color .15s;
-}
-.demo-strip .demo-btn:hover:not(:disabled) { color: var(--shu-deep); }
-.demo-strip .demo-btn::after { content: " →"; transition: margin-left .15s; display: inline-block; }
-.demo-strip .demo-btn:hover:not(:disabled)::after { margin-left: 0.2rem; }
-.demo-strip .demo-btn:disabled {
-  color: var(--ink-muted); cursor: not-allowed;
-}
-.demo-strip .demo-btn:disabled::after { content: " (soon)"; font-style: normal; font-size: 0.8em; }
-
-/* status + error — quiet text strips */
+/* status + error */
 #status-area:empty, #error-area.is-hidden { display: none; }
 .status-line {
   margin-top: 2rem;
@@ -304,19 +294,15 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
 
-/* toast */
-.toast {
-  position: fixed; bottom: 1.5rem; left: 50%;
-  transform: translateX(-50%);
-  background: var(--ink); color: var(--paper);
-  font-size: 0.875rem;
-  padding: 0.6rem 1.1rem; border-radius: 2px;
-  z-index: 50;
-  opacity: 0;
-  animation: toastIn 0.3s forwards, toastOut 0.3s 3.7s forwards;
+.hanko {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.5rem; height: 1.5rem;
+  background: var(--shu); color: var(--paper);
+  font-family: var(--font-jp); font-weight: 700;
+  font-size: 0.9rem; line-height: 1;
+  outline: 1px solid var(--paper); outline-offset: -3px;
+  vertical-align: middle;
 }
-@keyframes toastIn { to { opacity: 1; } }
-@keyframes toastOut { to { opacity: 0; } }
 
 /* footer */
 footer.site {
@@ -363,115 +349,97 @@ footer.site .motto {
 <main id="main">
   <div class="title-block">
     <h1>Translate a .docx file.</h1>
-    <span class="jp-subhead" lang="ja" style="margin-top:0;margin-bottom:1rem;">文書翻訳 · bunsho hon'yaku</span>
+    <span class="jp-subhead" lang="ja">文書翻訳 · bunsho hon'yaku</span>
   </div>
 
-  <aside class="demo-strip" aria-label="Quick demo option">
-    <div class="demo-row">
-      <p class="demo-msg">
-        <em>Quick demo:</em> 2 docs/day, no key needed.
-        <span class="caption" lang="vi"> · 2 file/ngày, không cần key.</span>
-      </p>
-      <button type="button" id="demo-btn" class="demo-btn">Try demo</button>
-    </div>
-    <div id="demo-flow" class="demo-flow is-hidden">
-      <p class="caption">Select a .docx file and target language above, then verify and translate.</p>
-      <div id="turnstile-widget"></div>
-    </div>
-  </aside>
-
   <form id="translate-form" novalidate>
+    <!-- Primary: file -->
+    <input id="docx-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="sr-only">
+    <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Choose or drop a .docx file" aria-describedby="drop-help">
+      <p class="drop-headline" id="drop-help">Drop a .docx here</p>
+      <p class="drop-sub">or click to choose</p>
+    </div>
+    <div id="file-meta" class="caption is-hidden" aria-live="polite"></div>
 
-    <!-- 01 · API key -->
-    <div class="field-group">
-      <div class="numeral" aria-hidden="true">01</div>
-      <div class="content">
-        <h2>API key</h2>
-        <span class="jp-subhead" lang="ja">鍵 · kagi</span>
-        <p class="caption">
-          Bring your own. Free keys:
+    <!-- Primary: target language -->
+    <div class="lang-row">
+      <label for="target-lang">Translate to</label>
+      <select id="target-lang">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="other">Custom…</option>
+      </select>
+      <label id="custom-lang-label" for="target-lang-custom" class="is-hidden" style="margin-top:0.5rem;">Custom language code (BCP-47)</label>
+      <input id="target-lang-custom" type="text" placeholder="e.g. de, pt-BR, zh-Hant" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label" style="margin-top:0.35rem;">
+    </div>
+
+    <!-- Primary: Turnstile + Translate (free) -->
+    <div class="primary-action">
+      <div id="turnstile-mount" class="is-hidden"></div>
+      <button type="button" id="demo-btn" class="btn-primary">Translate</button>
+      <p class="primary-note">Free · powered by Cloudflare Workers AI · 2 docs/day per IP</p>
+    </div>
+
+    <!-- BYOK: collapsible advanced -->
+    <details class="byok-section">
+      <summary>
+        <span class="byok-title">Use your own LLM key</span>
+        <span class="byok-tagline">unlimited · pick any model · better quality</span>
+      </summary>
+      <div class="byok-body">
+        <p class="byok-pitch">
+          Bring your own key (BYOK) to skip the daily cap and pick higher-tier models (Claude, GPT-4, Llama 70B…) for better translation quality.
+          Free keys from
           <a href="https://openrouter.ai/?ref=nightskat" rel="noopener noreferrer">OpenRouter</a>,
           <a href="https://aistudio.google.com/apikey" rel="noopener noreferrer">Google AI Studio</a>,
           <a href="https://console.groq.com/keys" rel="noopener noreferrer">Groq</a>,
           <a href="https://cloud.cerebras.ai" rel="noopener noreferrer">Cerebras</a>.
         </p>
-        <label for="api-key" class="sr-only">API key</label>
-        <div class="key-row">
-          <input id="api-key" type="password" maxlength="200" autocomplete="off" spellcheck="false" placeholder="sk-or-v1-…">
-          <button type="button" id="toggle-key-visibility" class="icon-btn" aria-label="Hiện API key">show</button>
+
+        <div class="field-stack">
+          <div>
+            <label for="api-key">API key</label>
+            <div class="key-row">
+              <input id="api-key" type="password" maxlength="200" autocomplete="off" spellcheck="false" placeholder="sk-or-v1-…">
+              <button type="button" id="toggle-key-visibility" class="icon-btn" aria-label="Hiện API key">show</button>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="clear-key-on-submit">
+              <label for="clear-key-on-submit">Clear key after submit · <span lang="vi">Xóa key sau khi gửi</span></label>
+            </div>
+          </div>
+          <div>
+            <label for="provider">Provider</label>
+            <select id="provider">
+              <option value="openrouter" selected>OpenRouter</option>
+              <option value="groq">Groq</option>
+              <option value="cerebras">Cerebras</option>
+              <option value="google">Google AI Studio</option>
+            </select>
+          </div>
+          <div>
+            <label for="model">Model</label>
+            <input id="model" type="text" placeholder="google/gemini-2.0-flash-exp:free" value="google/gemini-2.0-flash-exp:free" autocomplete="off" spellcheck="false">
+            <p class="caption sub-note">Free defaults shown. Override with any model the provider accepts.</p>
+          </div>
+          <div>
+            <label for="endpoint-url">Worker endpoint <span class="req">required</span></label>
+            <input id="endpoint-url" type="url" placeholder="https://your-worker.workers.dev/translate">
+            <p class="caption sub-note">Deploy the open-source worker to your Cloudflare account, paste its URL here.</p>
+          </div>
         </div>
-        <div class="checkbox-row">
-          <input type="checkbox" id="clear-key-on-submit">
-          <label for="clear-key-on-submit">Clear key after submit · <span lang="vi">Xóa key sau khi gửi</span></label>
+
+        <div class="byok-actions">
+          <button type="button" id="byok-btn" class="btn-secondary">Translate with my key</button>
+          <button type="button" id="retry-btn" class="cancel-btn is-hidden">Retry</button>
         </div>
       </div>
-    </div>
+    </details>
 
-    <!-- 02 · Provider & endpoint -->
-    <div class="field-group">
-      <div class="numeral" aria-hidden="true">02</div>
-      <div class="content field-stack">
-        <h2>Provider &amp; model</h2>
-        <span class="jp-subhead" lang="ja">機関 · kikan</span>
-        <div>
-          <label for="provider">Provider</label>
-          <select id="provider">
-            <option value="openrouter" selected>OpenRouter</option>
-            <option value="groq">Groq</option>
-            <option value="cerebras">Cerebras</option>
-            <option value="google">Google AI Studio</option>
-          </select>
-        </div>
-        <div>
-          <label for="model">Model</label>
-          <input id="model" type="text" placeholder="google/gemini-2.0-flash-exp:free" value="google/gemini-2.0-flash-exp:free" autocomplete="off" spellcheck="false">
-          <p class="caption sub-note">Free defaults shown. Override with any model the provider accepts.</p>
-        </div>
-        <div>
-          <label for="endpoint-url">Worker endpoint <span class="req">required</span></label>
-          <input id="endpoint-url" type="url" placeholder="https://your-worker.workers.dev/translate" required>
-          <p class="caption sub-note">Deploy the open-source worker to your Cloudflare account and paste its URL here.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- 03 · File & target -->
-    <div class="field-group">
-      <div class="numeral" aria-hidden="true">03</div>
-      <div class="content field-stack">
-        <h2>File &amp; target</h2>
-        <span class="jp-subhead" lang="ja">文書 · bunsho</span>
-        <input id="docx-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="sr-only">
-        <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Choose or drop a .docx file" aria-describedby="drop-help">
-          <p class="drop-headline" id="drop-help">Drop a .docx here</p>
-          <p class="drop-sub">or click to choose</p>
-        </div>
-        <div id="file-meta" class="caption" aria-live="polite"></div>
-        <div>
-          <label for="target-lang">Translate to</label>
-          <select id="target-lang">
-            <option value="vi">Tiếng Việt</option>
-            <option value="en">English</option>
-            <option value="ja">日本語</option>
-            <option value="fr">Français</option>
-            <option value="es">Español</option>
-            <option value="other">Custom…</option>
-          </select>
-        </div>
-        <div>
-          <label id="custom-lang-label" for="target-lang-custom" class="is-hidden">Custom language code (BCP-47)</label>
-          <input id="target-lang-custom" type="text" placeholder="e.g. de, pt-BR, zh-Hant" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label">
-        </div>
-      </div>
-    </div>
-
-    <!-- Submit -->
-    <div class="submit-row">
-      <button type="submit" id="submit-btn" class="text-btn submit">Translate</button>
-      <button type="button" id="cancel-btn" class="text-btn secondary is-hidden">Cancel</button>
-      <button type="button" id="retry-btn" class="text-btn secondary is-hidden">Retry</button>
-    </div>
-    <p class="submit-note">Processing happens between your browser and your worker. We don't proxy your file.</p>
+    <button type="button" id="cancel-btn" class="cancel-btn is-hidden" style="margin-top:1rem;">Cancel</button>
   </form>
 
   <div id="status-area" aria-live="polite"></div>
@@ -488,7 +456,6 @@ footer.site .motto {
       <a href="/privacy.html">Privacy</a>
       <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
       <a href="https://ko-fi.com/nightskat" rel="noopener noreferrer">Ko-fi</a>
-      <a href="https://github.com/sponsors/nightskat" rel="noopener noreferrer">Sponsors</a>
     </div>
     <div class="motto"><em>Pod splits. Fruit whole.</em>&nbsp;<span class="hanko" aria-hidden="true" title="通">通</span></div>
   </footer>
@@ -496,9 +463,11 @@ footer.site .motto {
 
 <script id="app-logic">
 /* CONFIG */
-const MAX_SIZE = 15 * 1024 * 1024; // 15 MB
+const MAX_SIZE = 15 * 1024 * 1024;
 const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-const REQUEST_TIMEOUT = 60000; // 60s
+const REQUEST_TIMEOUT = 60000;
+const DEMO_ENDPOINT = "https://dich-web.nightskat.workers.dev/translate-demo";
+const TURNSTILE_SITE_KEY = "0x4AAAAAADRIwiBZzB6QlwY3";
 
 /* STATE */
 let state = {
@@ -506,11 +475,10 @@ let state = {
   file: null,
   selectedLang: "vi",
   customLang: "",
-  provider: "openrouter",
-  endpointUrl: "",
   clearKeyOnSubmit: false,
   lastError: "",
-  abortController: null
+  abortController: null,
+  lastMode: null
 };
 
 /* DOM */
@@ -527,15 +495,20 @@ const clearKeyChk = document.getElementById("clear-key-on-submit");
 const providerSelect = document.getElementById("provider");
 const modelInput = document.getElementById("model");
 const endpointInput = document.getElementById("endpoint-url");
-const submitBtn = document.getElementById("submit-btn");
+const demoBtn = document.getElementById("demo-btn");
+const byokBtn = document.getElementById("byok-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 const retryBtn = document.getElementById("retry-btn");
 const statusArea = document.getElementById("status-area");
 const errorArea = document.getElementById("error-area");
+const turnstileMount = document.getElementById("turnstile-mount");
 const dropHeadline = document.querySelector(".drop-zone .drop-headline");
 const dropSub = document.querySelector(".drop-zone .drop-sub");
 const originalDropText = dropHeadline ? dropHeadline.textContent : "Drop a .docx here";
 const originalDropSub = dropSub ? dropSub.textContent : "or click to choose";
+
+let turnstileWidgetId = null;
+let pendingDemoSubmit = false;
 
 /* VALIDATION */
 function validateFile(file){
@@ -545,12 +518,14 @@ function validateFile(file){
   return "";
 }
 function validateLang(lang){
-  const regex = /^[A-Za-z0-9_-]{1,50}$/;
-  return regex.test(lang) ? "" : "Mã ngôn ngữ không hợp lệ.";
+  return /^[A-Za-z0-9_-]{1,50}$/.test(lang) ? "" : "Mã ngôn ngữ không hợp lệ.";
 }
 function validateEndpoint(url){
   try{ const u = new URL(url); return (u.protocol==="http:"||u.protocol==="https:") ? "" : "Endpoint không hợp lệ."; }
   catch{ return "Endpoint không hợp lệ."; }
+}
+function effectiveLang(){
+  return state.selectedLang === "other" ? state.customLang.trim() : state.selectedLang;
 }
 
 /* FILE IO */
@@ -618,8 +593,7 @@ function render(){
   }
   // disable during submit
   const disabled = state.status==="submitting";
-  [fileInput,targetSelect,targetCustom,apiKeyInput,providerSelect,modelInput,endpointInput,submitBtn].forEach(el=>el.disabled=disabled);
-  cancelBtn.disabled = false;
+  [fileInput,targetSelect,targetCustom,apiKeyInput,providerSelect,modelInput,endpointInput,demoBtn,byokBtn].forEach(el=>{ if(el) el.disabled=disabled; });
   // clear status area children
   while(statusArea.firstChild) statusArea.removeChild(statusArea.firstChild);
   errorArea.classList.add("is-hidden");
@@ -627,9 +601,11 @@ function render(){
   if(state.status==="submitting"){
     const line = document.createElement("p");
     line.className = "status-line status-loading";
-    line.textContent = "Translating…  ·  Đang dịch…";
+    const modeLabel = state.lastMode === "byok" ? "with your key" : "via free demo";
+    line.textContent = "Translating " + modeLabel + " …  ·  Đang dịch…";
     statusArea.appendChild(line);
     cancelBtn.classList.remove("is-hidden");
+    retryBtn.classList.add("is-hidden");
   } else if(state.status==="error"){
     errorArea.textContent = state.lastError;
     errorArea.classList.remove("is-hidden");
@@ -653,13 +629,7 @@ function setState(patch){
   render();
 }
 
-function focusFirstInvalid(){
-  if(!state.file){ dropZone.focus(); return; }
-  if(state.selectedLang==="other" && validateLang(state.customLang.trim())){ targetCustom.focus(); return; }
-  if(!apiKeyInput.value.trim()){ apiKeyInput.focus(); return; }
-}
-
-/* EVENTS */
+/* EVENTS — file + lang */
 dropZone.addEventListener("click",()=>{ if(state.status!=="submitting") fileInput.click(); });
 dropZone.addEventListener("keydown",e=>{ if(state.status!=="submitting" && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); fileInput.click(); } });
 dropZone.addEventListener("dragover",e=>{ e.preventDefault(); if(state.status!=="submitting") dropZone.classList.add("is-dragover"); });
@@ -675,22 +645,15 @@ fileInput.addEventListener("change",e=>{
 });
 function handleFilesSelection(fileList){
   let validFile = null;
-  let skipped = 0;
   for(let i=0;i<fileList.length;i++){
-    const f = fileList[i];
-    const err = validateFile(f);
-    if(!err && !validFile){ validFile = f; }
-    else { skipped++; }
+    const err = validateFile(fileList[i]);
+    if(!err && !validFile){ validFile = fileList[i]; break; }
   }
   if(!validFile){
-    setState({status:"error",lastError:"Không có file .docx hợp lệ trong danh sách.",file:null});
+    setState({status:"error",lastError:"Không có file .docx hợp lệ.",file:null});
     return;
   }
-  if(skipped>0){
-    setState({file:validFile,status:"idle",lastError:""});
-  } else {
-    setState({file:validFile,status:"idle",lastError:""});
-  }
+  setState({file:validFile,status:"idle",lastError:""});
 }
 targetSelect.addEventListener("change",e=>setState({selectedLang:e.target.value, customLang:""}));
 targetCustom.addEventListener("input",e=>setState({customLang:e.target.value}));
@@ -701,106 +664,67 @@ toggleKeyBtn.addEventListener("click",()=>{
   toggleKeyBtn.setAttribute("aria-label", showing ? "Hiện API key" : "Ẩn API key");
 });
 clearKeyChk.addEventListener("change",e=>setState({clearKeyOnSubmit:e.target.checked}));
-providerSelect.addEventListener("change",e=>setState({provider:e.target.value}));
-endpointInput.addEventListener("input",e=>setState({endpointUrl:e.target.value}));
 retryBtn.addEventListener("click",()=>setState({status:"idle",lastError:""}));
 cancelBtn.addEventListener("click",()=>{
   if(state.abortController){ state.abortController.abort(); }
   setState({status:"idle",lastError:"Yêu cầu đã bị hủy.", abortController:null});
 });
 
-/* ERROR MAPPING */
-function mapError(status, data){
-  if(status>=500) return "Lỗi máy chủ, vui lòng thử lại sau.";
-  if(data && typeof data.error==="string"){
-    const known = {
-      "Invalid API key":"API key không hợp lệ.",
-      "Rate limit exceeded":"Vượt quá hạn mức, vui lòng chờ."
-    };
-    return known[data.error]||"Yêu cầu không hợp lệ.";
+/* PRIMARY (DEMO) FLOW */
+function preflightPrimary(){
+  if(!state.file){
+    setState({status:"error", lastError:"Chọn file .docx trước."});
+    dropZone.focus();
+    return false;
   }
-  return "Đã xảy ra lỗi không xác định.";
+  const lang = effectiveLang();
+  const langErr = validateLang(lang);
+  if(langErr){ setState({status:"error", lastError: langErr}); return false; }
+  return true;
 }
 
-/* FORM SUBMIT */
-form.addEventListener("submit",async e=>{
-  e.preventDefault();
-  if(state.status==="submitting") return;
-  if(!state.file){
-    setState({status:"error",lastError:"Vui lòng chọn file .docx trước khi dịch."});
-    focusFirstInvalid();
+function mountTurnstile(){
+  if(turnstileWidgetId !== null) return;
+  if(!window.turnstile){
+    setTimeout(mountTurnstile, 250);
     return;
   }
-  const effectiveLang = state.selectedLang==="other"?state.customLang.trim():state.selectedLang;
-  const langErr = validateLang(effectiveLang);
-  if(langErr){ setState({status:"error",lastError:langErr}); focusFirstInvalid(); return; }
-  const apiKey = apiKeyInput.value.trim();
-  if(!apiKey){ setState({status:"error",lastError:"Vui lòng nhập API key."}); focusFirstInvalid(); return; }
-  const endpoint = state.endpointUrl.trim()||endpointInput.placeholder;
-  const epErr = validateEndpoint(endpoint);
-  if(epErr){ setState({status:"error",lastError:epErr}); focusFirstInvalid(); return; }
+  turnstileMount.classList.remove("is-hidden");
+  turnstileWidgetId = window.turnstile.render(turnstileMount, {
+    sitekey: TURNSTILE_SITE_KEY,
+    callback: function(token){
+      if(pendingDemoSubmit){
+        pendingDemoSubmit = false;
+        submitDemo(token);
+      }
+    },
+    "error-callback": function(){
+      pendingDemoSubmit = false;
+      setState({status:"error", lastError:"Lỗi widget bảo vệ. Thử lại."});
+    },
+    "expired-callback": function(){ /* user must re-verify */ },
+    theme: "auto",
+    size: "normal"
+  });
+}
 
-  const fileSnapshot = state.file;
-  const langSnapshot = effectiveLang;
-  setState({status:"submitting", endpointUrl:endpoint, selectedLang:state.selectedLang, customLang:state.customLang, lastError:"", abortController:new AbortController()});
-  const controller = state.abortController;
-  const timeoutId = setTimeout(()=>controller.abort(), REQUEST_TIMEOUT);
-  try{
-    const b64 = await encodeFileToBase64(fileSnapshot);
-    const payload = { docx:b64, targetLang:langSnapshot, apiKey, provider:state.provider, model: modelInput.value.trim() };
-    const resp = await fetch(endpoint,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(payload),
-      signal:controller.signal
-    });
-    clearTimeout(timeoutId);
-    if(!resp.ok){
-      let errData = {};
-      try{ errData = await resp.json(); }catch{}
-      throw new Error(mapError(resp.status, errData));
-    }
-    let data;
-    try{ data = await resp.json(); }catch{ throw new Error("Phản hồi từ máy chủ không đúng định dạng JSON."); }
-    if(!data.docx){ throw new Error("Phản hồi không chứa file đã dịch."); }
-    const blob = base64ToBlob(data.docx,DOCX_MIME);
-    const filename = data.filename||fileSnapshot.name.replace(/\.docx$/i,"") + "_" + langSnapshot + ".docx";
-    downloadBlob(blob,filename);
-    setState({status:"success", abortController:null});
-  }catch(err){
-    if(err.name==="AbortError"){
-      setState({status:"error",lastError:"Yêu cầu đã bị hủy.", abortController:null});
-    }else{
-      setState({status:"error",lastError:err.message||"Đã xảy ra lỗi.", abortController:null});
-    }
-  }finally{
-    if(state.clearKeyOnSubmit) apiKeyInput.value="";
+demoBtn.addEventListener("click", function(){
+  if(state.status === "submitting") return;
+  if(!preflightPrimary()) return;
+  setState({lastMode: "demo"});
+  pendingDemoSubmit = true;
+  if(turnstileWidgetId === null){
+    mountTurnstile();
+  } else if(window.turnstile){
+    window.turnstile.reset(turnstileWidgetId);
+    window.turnstile.execute(turnstileWidgetId);
   }
 });
 
-/* DEMO TIER (CF Workers AI, no key) */
-const DEMO_ENDPOINT = "https://dich-web.nightskat.workers.dev/translate-demo";
-const TURNSTILE_SITE_KEY = "0x4AAAAAADRIwiBZzB6QlwY3";
-
-const demoBtn = document.getElementById("demo-btn");
-const demoFlow = document.getElementById("demo-flow");
-const turnstileMount = document.getElementById("turnstile-widget");
-let turnstileWidgetId = null;
-let demoArmed = false;
-
-function showDemoError(msg){
-  setState({status:"error", lastError: msg, abortController:null});
-  if(turnstileWidgetId !== null && window.turnstile){
-    try{ window.turnstile.reset(turnstileWidgetId); }catch{}
-  }
-}
-
 async function submitDemo(token){
-  if(!state.file){ showDemoError("Chọn file .docx trước."); return; }
-  const lang = state.selectedLang === "other" ? state.customLang.trim() : state.selectedLang;
-  const langErr = validateLang(lang);
-  if(langErr){ showDemoError(langErr); return; }
-  setState({status:"submitting", lastError:"", abortController: new AbortController()});
+  if(!state.file){ setState({status:"error", lastError:"Chọn file trước."}); return; }
+  const lang = effectiveLang();
+  setState({status:"submitting", lastError:"", abortController: new AbortController(), lastMode: "demo"});
   const controller = state.abortController;
   const timeoutId = setTimeout(()=>controller.abort(), REQUEST_TIMEOUT);
   const fileSnapshot = state.file;
@@ -830,9 +754,9 @@ async function submitDemo(token){
     setState({status:"success", abortController:null});
   }catch(err){
     if(err.name === "AbortError"){
-      showDemoError("Yêu cầu đã bị hủy.");
+      setState({status:"error", lastError:"Yêu cầu đã bị hủy.", abortController:null});
     }else{
-      showDemoError(err.message || "Đã xảy ra lỗi.");
+      setState({status:"error", lastError: err.message || "Đã xảy ra lỗi.", abortController:null});
     }
   }finally{
     if(turnstileWidgetId !== null && window.turnstile){
@@ -841,56 +765,82 @@ async function submitDemo(token){
   }
 }
 
-function mountTurnstile(){
-  if(turnstileWidgetId !== null) return;
-  if(!window.turnstile){
-    // script still loading — retry shortly
-    setTimeout(mountTurnstile, 250);
-    return;
-  }
-  turnstileWidgetId = window.turnstile.render(turnstileMount, {
-    sitekey: TURNSTILE_SITE_KEY,
-    callback: function(token){ submitDemo(token); },
-    "error-callback": function(){ showDemoError("Lỗi widget bảo vệ. Thử lại."); },
-    "expired-callback": function(){ /* user must re-verify */ },
-    theme: "light",
-    size: "normal"
-  });
+/* BYOK FLOW */
+function preflightByok(){
+  if(!preflightPrimary()) return false;
+  const apiKey = apiKeyInput.value.trim();
+  if(!apiKey){ setState({status:"error", lastError:"Vui lòng nhập API key."}); apiKeyInput.focus(); return false; }
+  const endpoint = endpointInput.value.trim();
+  if(!endpoint){ setState({status:"error", lastError:"Vui lòng nhập Worker endpoint."}); endpointInput.focus(); return false; }
+  const epErr = validateEndpoint(endpoint);
+  if(epErr){ setState({status:"error", lastError: epErr}); endpointInput.focus(); return false; }
+  return { apiKey, endpoint };
 }
 
-demoBtn.addEventListener("click", function(){
-  if(state.status === "submitting") return;
-  if(!state.file){
-    setState({status:"error", lastError:"Vui lòng chọn file .docx trước khi dùng demo.", abortController:null});
-    dropZone.focus();
-    return;
+function mapByokError(status, data){
+  if(status>=500) return "Lỗi máy chủ, vui lòng thử lại sau.";
+  if(data && typeof data.error==="string"){
+    const known = {
+      "Invalid API key":"API key không hợp lệ.",
+      "Rate limit exceeded":"Vượt quá hạn mức, vui lòng chờ."
+    };
+    return known[data.error]||data.error||"Yêu cầu không hợp lệ.";
   }
-  if(!demoArmed){
-    demoArmed = true;
-    demoFlow.classList.remove("is-hidden");
-    demoBtn.disabled = true;
-    demoBtn.textContent = "Verify below ↓";
-    mountTurnstile();
+  return "Đã xảy ra lỗi không xác định.";
+}
+
+byokBtn.addEventListener("click", async function(){
+  if(state.status === "submitting") return;
+  const pre = preflightByok();
+  if(!pre) return;
+  const { apiKey, endpoint } = pre;
+  const lang = effectiveLang();
+  const fileSnapshot = state.file;
+  setState({status:"submitting", lastError:"", abortController: new AbortController(), lastMode: "byok"});
+  const controller = state.abortController;
+  const timeoutId = setTimeout(()=>controller.abort(), REQUEST_TIMEOUT);
+  try{
+    const b64 = await encodeFileToBase64(fileSnapshot);
+    const payload = { docx:b64, targetLang:lang, apiKey, provider:providerSelect.value, model: modelInput.value.trim() };
+    const resp = await fetch(endpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    if(!resp.ok){
+      let errData = {};
+      try{ errData = await resp.json(); }catch{}
+      throw new Error(mapByokError(resp.status, errData));
+    }
+    let data;
+    try{ data = await resp.json(); }catch{ throw new Error("Phản hồi từ máy chủ không đúng định dạng JSON."); }
+    if(!data.docx){ throw new Error("Phản hồi không chứa file đã dịch."); }
+    const blob = base64ToBlob(data.docx,DOCX_MIME);
+    const filename = data.filename||fileSnapshot.name.replace(/\.docx$/i,"") + "_" + lang + ".docx";
+    downloadBlob(blob,filename);
+    setState({status:"success", abortController:null});
+  }catch(err){
+    if(err.name==="AbortError"){
+      setState({status:"error", lastError:"Yêu cầu đã bị hủy.", abortController:null});
+    }else{
+      setState({status:"error", lastError: err.message || "Đã xảy ra lỗi.", abortController:null});
+    }
+  }finally{
+    if(state.clearKeyOnSubmit) apiKeyInput.value="";
   }
 });
 
-/* TOAST */
-function showToast(msg){
-  const toast = document.createElement("div");
-  toast.className="toast";
-  toast.textContent=msg;
-  document.body.appendChild(toast);
-  setTimeout(()=>toast.remove(),4000);
-}
+/* prevent enter-submit from form (avoid accidental BYOK fire) */
+form.addEventListener("submit", e => e.preventDefault());
 
 /* INIT */
 setState({
-  endpointUrl: endpointInput.value.trim()||endpointInput.placeholder,
   clearKeyOnSubmit: clearKeyChk.checked,
   selectedLang: targetSelect.value,
   customLang: ""
 });
-
 </script>
 </body>
 </html>
