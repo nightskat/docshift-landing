@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Noto+Serif+JP:wght@400&display=swap" rel="stylesheet">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
 :root {
   --font-display: 'Fraunces', 'Times New Roman', serif;
@@ -253,9 +254,18 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   padding: 1rem 1.25rem;
   background: var(--paper-soft);
   border-left: 2px solid var(--shu);
+}
+.demo-strip .demo-row {
   display: flex; align-items: baseline; justify-content: space-between;
   flex-wrap: wrap; gap: 0.75rem;
 }
+.demo-strip .demo-flow {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--rule);
+}
+.demo-strip .demo-flow p.caption { margin-bottom: 0.5rem; }
+.demo-strip .demo-flow #turnstile-widget { min-height: 65px; }
 .demo-strip .demo-msg {
   font-size: 0.9rem; color: var(--ink-soft); margin: 0;
 }
@@ -359,11 +369,17 @@ footer.site .motto {
   </div>
 
   <aside class="demo-strip" aria-label="Quick demo option">
-    <p class="demo-msg">
-      <em>Quick demo:</em> 1 doc/day, no key needed.
-      <span class="caption" lang="vi"> · 1 file/ngày, không cần key.</span>
-    </p>
-    <button type="button" id="demo-btn" class="demo-btn" disabled aria-disabled="true">Try demo</button>
+    <div class="demo-row">
+      <p class="demo-msg">
+        <em>Quick demo:</em> 2 docs/day, no key needed.
+        <span class="caption" lang="vi"> · 2 file/ngày, không cần key.</span>
+      </p>
+      <button type="button" id="demo-btn" class="demo-btn">Try demo</button>
+    </div>
+    <div id="demo-flow" class="demo-flow is-hidden">
+      <p class="caption">Select a .docx file and target language above, then verify and translate.</p>
+      <div id="turnstile-widget"></div>
+    </div>
   </aside>
 
   <form id="translate-form" novalidate>
@@ -762,6 +778,102 @@ form.addEventListener("submit",async e=>{
     }
   }finally{
     if(state.clearKeyOnSubmit) apiKeyInput.value="";
+  }
+});
+
+/* DEMO TIER (CF Workers AI, no key) */
+const DEMO_ENDPOINT = "https://dich-web.nightskat.workers.dev/translate-demo";
+const TURNSTILE_SITE_KEY = "0x4AAAAAADRIwiBZzB6QlwY3";
+
+const demoBtn = document.getElementById("demo-btn");
+const demoFlow = document.getElementById("demo-flow");
+const turnstileMount = document.getElementById("turnstile-widget");
+let turnstileWidgetId = null;
+let demoArmed = false;
+
+function showDemoError(msg){
+  setState({status:"error", lastError: msg, abortController:null});
+  if(turnstileWidgetId !== null && window.turnstile){
+    try{ window.turnstile.reset(turnstileWidgetId); }catch{}
+  }
+}
+
+async function submitDemo(token){
+  if(!state.file){ showDemoError("Chọn file .docx trước."); return; }
+  const lang = state.selectedLang === "other" ? state.customLang.trim() : state.selectedLang;
+  const langErr = validateLang(lang);
+  if(langErr){ showDemoError(langErr); return; }
+  setState({status:"submitting", lastError:"", abortController: new AbortController()});
+  const controller = state.abortController;
+  const timeoutId = setTimeout(()=>controller.abort(), REQUEST_TIMEOUT);
+  const fileSnapshot = state.file;
+  try{
+    const b64 = await encodeFileToBase64(fileSnapshot);
+    const resp = await fetch(DEMO_ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ docx: b64, targetLang: lang, turnstileToken: token }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    if(!resp.ok){
+      let errData = {};
+      try{ errData = await resp.json(); }catch{}
+      let msg = errData.error || "Demo request failed.";
+      if(resp.status === 429) msg = "Đã dùng hết lượt demo hôm nay (2/ngày). Dùng API key của bạn ở dưới.";
+      else if(resp.status === 503) msg = "Demo tạm dừng (quota AI hôm nay đã cạn). Dùng API key của bạn.";
+      else if(resp.status === 403) msg = "Bot check thất bại. Thử lại.";
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    if(!data.docx) throw new Error("Phản hồi không chứa file đã dịch.");
+    const blob = base64ToBlob(data.docx, DOCX_MIME);
+    const filename = data.filename || fileSnapshot.name.replace(/\.docx$/i,"") + "_" + lang + ".docx";
+    downloadBlob(blob, filename);
+    setState({status:"success", abortController:null});
+  }catch(err){
+    if(err.name === "AbortError"){
+      showDemoError("Yêu cầu đã bị hủy.");
+    }else{
+      showDemoError(err.message || "Đã xảy ra lỗi.");
+    }
+  }finally{
+    if(turnstileWidgetId !== null && window.turnstile){
+      try{ window.turnstile.reset(turnstileWidgetId); }catch{}
+    }
+  }
+}
+
+function mountTurnstile(){
+  if(turnstileWidgetId !== null) return;
+  if(!window.turnstile){
+    // script still loading — retry shortly
+    setTimeout(mountTurnstile, 250);
+    return;
+  }
+  turnstileWidgetId = window.turnstile.render(turnstileMount, {
+    sitekey: TURNSTILE_SITE_KEY,
+    callback: function(token){ submitDemo(token); },
+    "error-callback": function(){ showDemoError("Lỗi widget bảo vệ. Thử lại."); },
+    "expired-callback": function(){ /* user must re-verify */ },
+    theme: "light",
+    size: "normal"
+  });
+}
+
+demoBtn.addEventListener("click", function(){
+  if(state.status === "submitting") return;
+  if(!state.file){
+    setState({status:"error", lastError:"Vui lòng chọn file .docx trước khi dùng demo.", abortController:null});
+    dropZone.focus();
+    return;
+  }
+  if(!demoArmed){
+    demoArmed = true;
+    demoFlow.classList.remove("is-hidden");
+    demoBtn.disabled = true;
+    demoBtn.textContent = "Verify below ↓";
+    mountTurnstile();
   }
 });
 
