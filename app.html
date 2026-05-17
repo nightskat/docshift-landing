@@ -1,316 +1,487 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
+<title>Akebi · Translate a .docx file</title>
+<meta name="description" content="Format-preserving DOCX translation in your browser. Bring your own LLM key.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Akebi | Dịch file .docx giữ nguyên định dạng</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Akebi · Translate a .docx file">
+<meta property="og:description" content="Format-preserving DOCX translation in your browser. Bring your own LLM key.">
+<meta property="og:url" content="https://akebi.pages.dev/app">
+<meta property="og:image" content="https://akebi.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Akebi · Translate a .docx file">
+<meta name="twitter:description" content="Format-preserving DOCX translation in your browser. Bring your own LLM key.">
+<meta name="twitter:image" content="https://akebi.pages.dev/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Noto+Serif+JP:wght@400&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg-color:#0f0f0f;
-  --text-color:#f5f5f5;
-  --accent-color:#6366f1;
-  --card-bg:#1a1a1a;
-  --border-color:#333;
-  --muted-text:#888;
-  --danger:#e53e3e;
-  --success:#38a169;
-  --focus-ring:#6366f1;
-  --radius:8px;
-  --shadow:0 2px 6px rgba(0,0,0,0.4);
-  --font-stack:"Be Vietnam Pro",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+:root {
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body:    'Manrope', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+  --font-jp:      'Noto Serif JP', serif;
+  --ink:        #1a1814;
+  --ink-soft:   #4a463e;
+  --ink-muted:  #8a857a;
+  --paper:      #faf7f2;
+  --paper-soft: #f4ede0;
+  --rule:       #d4cfc4;
+  --akebi:      #6b4a8c;
+  --akebi-deep: #3d2a52;
+  --shu:        #b91d22;
+  --shu-deep:   #7a1216;
+  --sumi:       #0f0d0a;
+  --live:       #5c8a4a;
+  --wait:       #c9882f;
+  --warn:       #b91d22;
+  --display-xl: clamp(3rem, 6vw, 5rem);
+  --display-lg: clamp(2rem, 4vw, 3rem);
+  --display-md: 1.75rem;
+  --body-lg:    1.125rem;
+  --body:       1.0625rem;
+  --caption:    0.75rem;
+  --col:        min(680px, 92vw);
+  --gutter:     clamp(1.5rem, 4vw, 4rem);
+  --hairline:   1px solid var(--rule);
 }
-*{box-sizing:border-box;}
-body{
-  margin:0;
-  font-family:var(--font-stack);
-  background:var(--bg-color);
-  color:var(--text-color);
-  line-height:1.5;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f0ebe2; --ink-soft: #c4bfb4; --ink-muted: #8a857a;
+    --paper: #14120f; --paper-soft: #1f1c17; --rule: #2d2a24;
+    --akebi: #b48ad6; --akebi-deep: #d4b3ee;
+    --shu: #e54d52; --shu-deep: #ff6f74; --sumi: #f0ebe2;
+    --warn: #e54d52;
+  }
 }
-header,footer{padding:1rem 2rem;text-align:center;}
-header h1{margin:0;font-size:2rem;color:var(--accent-color);}
-main{max-width:1000px;margin:auto;padding:0 2rem;}
-.translator-card{
-  background:var(--card-bg);
-  border:1px solid var(--border-color);
-  border-radius:var(--radius);
-  padding:1.5rem;
-  box-shadow:var(--shadow);
-  margin-top:2rem;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--paper); color: var(--ink); }
+body { font-family: var(--font-body); font-size: var(--body); line-height: 1.6; min-height: 100vh; }
+main { max-width: var(--col); margin: 0 auto; padding: 0 var(--gutter) 4rem; }
+
+h1, h2 { font-family: var(--font-display); font-style: italic; font-weight: 400; color: var(--ink); }
+h1 { font-size: var(--display-lg); letter-spacing: -0.01em; }
+h2 { font-size: var(--display-md); }
+p { color: var(--ink-soft); }
+a { color: var(--shu); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--shu-deep); text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--shu);
+  outline-offset: 2px;
 }
-.form-grid{display:grid;gap:1rem;}
-.field-group{display:flex;flex-direction:column;}
-label{margin-bottom:0.25rem;font-weight:600;}
-input,select,button,textarea{
-  padding:0.5rem;
-  border:1px solid var(--border-color);
-  border-radius:var(--radius);
-  background:#222;
-  color:var(--text-color);
-  font:inherit;
+
+hr { border: none; border-top: var(--hairline); margin: 0; }
+em { font-style: italic; font-family: var(--font-display); }
+
+/* utilities */
+.is-hidden { display: none !important; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
-input:focus,select:focus,button:focus{
-  outline:none;
-  box-shadow:0 0 0 2px var(--focus-ring);
+a.skip-link:focus {
+  position: fixed; top: 0.75rem; left: 0.75rem;
+  width: auto; height: auto; padding: 0.5rem 0.85rem;
+  clip: auto; overflow: visible; white-space: normal;
+  background: var(--ink); color: var(--paper);
+  font-size: 0.875rem; z-index: 100; border-radius: 2px;
 }
-button{
-  cursor:pointer;
-  background:var(--accent-color);
-  border:none;
-  color:#fff;
-  font-weight:600;
+.caption { font-size: var(--caption); color: var(--ink-muted); letter-spacing: 0.02em; }
+
+/* header */
+header.site {
+  display: flex; align-items: baseline; gap: 0.4rem;
+  padding: 1.25rem var(--gutter);
+  max-width: var(--col); margin: 0 auto;
+  font-size: 0.875rem;
 }
-button:disabled{
-  opacity:0.6;
-  cursor:not-allowed;
+.wordmark {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 1.125rem; color: var(--ink);
 }
-.drop-zone{
-  border:2px dashed var(--muted-text);
-  border-radius:var(--radius);
-  padding:2rem;
-  text-align:center;
-  cursor:pointer;
-  transition:background .2s;
+.wordmark .stamp {
+  font-family: var(--font-jp); font-size: 0.55em; color: var(--shu);
+  margin-left: 0.2rem; vertical-align: super; letter-spacing: 0.05em;
 }
-.drop-zone.is-dragover{background:rgba(99,102,241,0.1);}
-.drop-zone:focus-visible{
-  outline:none;
-  box-shadow:0 0 0 2px var(--focus-ring);
+header.site .crumb { color: var(--ink-muted); }
+header.site nav { margin-left: auto; display: flex; gap: 1.25rem; }
+header.site nav a { color: var(--ink-soft); }
+
+/* page title */
+.title-block { margin-top: 2rem; }
+.title-block h1 { margin-bottom: 0.75rem; }
+.title-block .lede { font-size: var(--body-lg); color: var(--ink-soft); }
+.title-block .lede-vi {
+  display: block; margin-top: 0.25rem;
+  font-family: var(--font-display); font-style: italic;
+  font-size: var(--body); color: var(--ink-muted);
 }
-.file-meta{margin-top:0.5rem;font-size:0.9rem;color:var(--muted-text);}
-.status-card{
-  margin-top:1rem;
-  padding:0.75rem;
-  border-radius:var(--radius);
+
+/* numbered field groups */
+.field-group {
+  margin-top: 3.5rem;
+  display: grid;
+  grid-template-columns: 4.5rem 1fr;
+  gap: 0;
+  align-items: start;
 }
-.status-success{background:rgba(56,161,105,0.2);color:var(--success);}
-.status-error{background:rgba(229,62,62,0.2);color:var(--danger);}
-.spinner{
-  border:4px solid rgba(255,255,255,0.2);
-  border-top:4px solid var(--accent-color);
-  border-radius:50%;
-  width:24px;height:24px;
-  animation:spin 1s linear infinite;
-  margin:auto;
+.field-group .numeral {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 3rem; line-height: 1; color: var(--ink-muted);
+  user-select: none;
 }
-@keyframes spin{to{transform:rotate(360deg);}}
-.is-hidden{display:none;}
-.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-@media (prefers-reduced-motion:reduce){
-  .spinner{animation:none;}
+.field-group .content h2 { margin-bottom: 0.75rem; line-height: 1.1; }
+.field-group .content > p.caption { margin-bottom: 1rem; }
+@media (max-width: 640px) {
+  .field-group { grid-template-columns: 1fr; gap: 0.5rem; }
+  .field-group .numeral { font-size: 2rem; }
 }
-details summary:focus-visible{
-  outline:none;
-  box-shadow:0 0 0 2px var(--focus-ring);
+
+/* form controls */
+label { display: block; margin-bottom: 0.35rem; font-size: 0.875rem; color: var(--ink-soft); font-weight: 500; }
+input[type="text"], input[type="password"], input[type="url"], select {
+  font: inherit; font-size: var(--body);
+  width: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--hairline);
+  border-radius: 2px;
+  padding: 0.65rem 0.85rem;
+  transition: border-color .15s;
 }
-.toast{
-  position:fixed;
-  bottom:1rem;
-  right:1rem;
-  background:var(--success);
-  color:#fff;
-  padding:0.75rem 1rem;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
+input[type="text"]:focus, input[type="password"]:focus, input[type="url"]:focus, select:focus {
+  border-color: var(--shu);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(185, 29, 34, 0.12);
 }
-/* Free key helper */
-.free-key-help{
-  background:rgba(99,102,241,0.06);
-  border:1px solid var(--border-color);
-  border-radius:var(--radius);
-  padding:0.5rem 0.75rem;
+input[type="text"]:disabled, input[type="password"]:disabled, input[type="url"]:disabled, select:disabled {
+  opacity: 0.5; cursor: not-allowed;
 }
-.free-key-help summary{
-  cursor:pointer;
-  font-weight:600;
-  color:var(--accent-color);
-  padding:0.25rem 0;
-  list-style:none;
+select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a857a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.25rem; }
+
+.key-row { display: flex; gap: 0.5rem; align-items: stretch; }
+.key-row input { flex: 1; }
+.icon-btn {
+  background: var(--paper); border: var(--hairline); border-radius: 2px;
+  padding: 0 0.85rem; cursor: pointer; color: var(--ink-muted);
+  font-family: var(--font-mono); font-size: 0.875rem;
+  transition: color .15s, border-color .15s;
 }
-.free-key-help summary::-webkit-details-marker{display:none;}
-.free-key-help summary::before{content:"🎁 ";}
-.free-key-help[open] summary{margin-bottom:0.5rem;}
-.free-key-help .vendor-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:0.5rem;
-  margin-top:0.5rem;
+.icon-btn:hover { color: var(--shu); border-color: var(--shu); }
+.checkbox-row { margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--ink-soft); }
+.checkbox-row input { width: 1rem; height: 1rem; accent-color: var(--shu); }
+.checkbox-row label { display: inline; margin: 0; cursor: pointer; }
+
+.field-stack > * + * { margin-top: 1rem; }
+.sub-note { margin-top: 0.35rem; }
+.jp-subhead {
+  display: block; margin-top: -0.5rem; margin-bottom: 1rem;
+  font-family: var(--font-jp); font-weight: 400;
+  font-size: 0.825rem; color: var(--ink-muted);
+  letter-spacing: 0.15em;
 }
-.free-key-help .vendor-card{
-  display:block;
-  text-decoration:none;
-  color:var(--text-color);
-  background:rgba(0,0,0,0.25);
-  border:1px solid var(--border-color);
-  border-radius:var(--radius);
-  padding:0.6rem 0.75rem;
-  transition:border-color 0.15s, background 0.15s;
+.hanko {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.5rem; height: 1.5rem;
+  background: var(--shu); color: var(--paper);
+  font-family: var(--font-jp); font-weight: 700;
+  font-size: 0.9rem; line-height: 1;
+  outline: 1px solid var(--paper); outline-offset: -3px;
+  vertical-align: middle;
 }
-.free-key-help .vendor-card:hover,
-.free-key-help .vendor-card:focus-visible{
-  border-color:var(--accent-color);
-  background:rgba(99,102,241,0.1);
-  outline:none;
+.req {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-muted); font-weight: 400; margin-left: 0.5rem;
 }
-.free-key-help .v-name{
-  font-weight:600;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:0.5rem;
+
+/* drop-zone */
+.drop-zone {
+  border: 1px dashed var(--rule);
+  background: transparent;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
 }
-.free-key-help .v-quota{
-  font-size:0.85rem;
-  color:var(--muted-text);
-  margin-top:0.2rem;
+.drop-zone:hover, .drop-zone:focus, .drop-zone.is-dragover {
+  border-style: solid;
+  border-color: var(--shu);
+  background: var(--paper-soft);
+  outline: none;
 }
-.free-key-help .v-tag{
-  font-size:0.7rem;
-  padding:1px 6px;
-  border-radius:999px;
-  letter-spacing:0.05em;
-  text-transform:uppercase;
-  font-weight:700;
+.drop-zone .drop-headline {
+  font-family: var(--font-display); font-style: italic;
+  font-size: var(--display-md); color: var(--ink);
 }
-.v-tag.recommended{background:var(--accent-color);color:#fff;}
-.v-tag.v2{background:#3f3f46;color:var(--muted-text);}
-.free-key-help .v-note{
-  font-size:0.8rem;
-  color:var(--muted-text);
-  margin-top:0.5rem;
-  font-style:italic;
+.drop-zone .drop-sub { color: var(--ink-muted); font-size: 0.875rem; margin-top: 0.35rem; }
+.drop-zone .file-name { font-weight: 600; color: var(--ink); font-size: var(--body-lg); }
+.drop-zone .file-size { color: var(--ink-muted); font-size: 0.875rem; margin-top: 0.25rem; }
+
+/* submit row */
+.submit-row {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: var(--hairline);
+  display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap;
 }
-/* Footer enhancements */
-footer{display:flex;flex-direction:column;gap:0.5rem;align-items:center;}
-footer a{color:var(--accent-color);text-decoration:none;}
-footer a:hover{text-decoration:underline;}
-.kofi-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:0.4rem;
-  padding:0.4rem 0.9rem;
-  background:#13C3FF;
-  color:#fff;
-  border-radius:999px;
-  font-weight:600;
-  font-size:0.9rem;
-  text-decoration:none;
+.submit-row .text-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: inherit;
 }
-.kofi-btn:hover{background:#0fa8df;text-decoration:none;}
+.submit-row .submit {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 1.5rem; color: var(--shu);
+  transition: color .15s;
+}
+.submit-row .submit:hover { color: var(--shu-deep); }
+.submit-row .submit::after { content: " →"; transition: margin-left .2s; display: inline-block; }
+.submit-row .submit:hover::after { margin-left: 0.25rem; }
+.submit-row .submit:disabled { color: var(--ink-muted); cursor: not-allowed; }
+.submit-row .submit:disabled::after { content: " ⋯"; }
+.submit-row .secondary {
+  font-size: 0.875rem; color: var(--ink-muted);
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.submit-row .secondary:hover { color: var(--ink); }
+.submit-note { margin-top: 0.75rem; font-size: var(--caption); color: var(--ink-muted); max-width: 36rem; }
+
+/* demo strip — quick try, no key */
+.demo-strip {
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  background: var(--paper-soft);
+  border-left: 2px solid var(--shu);
+  display: flex; align-items: baseline; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.75rem;
+}
+.demo-strip .demo-msg {
+  font-size: 0.9rem; color: var(--ink-soft); margin: 0;
+}
+.demo-strip .demo-msg em { color: var(--ink); margin-right: 0.3rem; }
+.demo-strip .demo-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font-display); font-style: italic;
+  font-size: 1.1rem; color: var(--shu);
+  transition: color .15s;
+}
+.demo-strip .demo-btn:hover:not(:disabled) { color: var(--shu-deep); }
+.demo-strip .demo-btn::after { content: " →"; transition: margin-left .15s; display: inline-block; }
+.demo-strip .demo-btn:hover:not(:disabled)::after { margin-left: 0.2rem; }
+.demo-strip .demo-btn:disabled {
+  color: var(--ink-muted); cursor: not-allowed;
+}
+.demo-strip .demo-btn:disabled::after { content: " (soon)"; font-style: normal; font-size: 0.8em; }
+
+/* status + error — quiet text strips */
+#status-area:empty, #error-area.is-hidden { display: none; }
+.status-line {
+  margin-top: 2rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--wait);
+  font-size: 0.95rem; color: var(--ink-soft);
+  font-family: var(--font-display); font-style: italic;
+}
+.status-line.status-success { border-left-color: var(--live); color: var(--ink); }
+#error-area {
+  margin-top: 2rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--warn);
+  font-size: 0.95rem; color: var(--ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* toast */
+.toast {
+  position: fixed; bottom: 1.5rem; left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink); color: var(--paper);
+  font-size: 0.875rem;
+  padding: 0.6rem 1.1rem; border-radius: 2px;
+  z-index: 50;
+  opacity: 0;
+  animation: toastIn 0.3s forwards, toastOut 0.3s 3.7s forwards;
+}
+@keyframes toastIn { to { opacity: 1; } }
+@keyframes toastOut { to { opacity: 0; } }
+
+/* footer */
+footer.site {
+  border-top: var(--hairline);
+  margin-top: 4rem;
+  padding-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.875rem;
+}
+footer.site .right { display: flex; gap: 1.25rem; }
+footer.site .right a { color: var(--ink-soft); }
+footer.site .motto {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--caption);
+  color: var(--ink-muted);
+}
+@media (max-width: 480px) {
+  footer.site { grid-template-columns: 1fr; }
+  footer.site .right { justify-content: flex-start; flex-wrap: wrap; }
+}
 </style>
 </head>
 <body>
-<header class="page-header">
-  <h1>Akebi</h1>
-  <p>Vỏ tách ra, format giữ nguyên — dịch file .docx bằng LLM của bạn</p>
+<a href="#main" class="sr-only skip-link">Skip to main content</a>
+
+<header class="site">
+  <a href="/" class="wordmark">akebi<span class="stamp">木通</span></a>
+  <span class="crumb">›</span>
+  <span class="crumb">app</span>
+  <nav>
+    <a href="/">Landing</a>
+    <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
+  </nav>
 </header>
-<main class="app-shell">
-  <section class="translator-card">
-    <form id="translate-form" novalidate>
-      <div class="form-grid">
-        <!-- File input -->
-        <div class="field-group">
-          <label for="docx-file">Chọn file .docx</label>
-          <input id="docx-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="sr-only">
-          <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-describedby="drop-help">
-            Kéo thả file vào đây hoặc nhấn để chọn
-          </div>
-          <div id="drop-help" class="sr-only">Chỉ chấp nhận file .docx, tối đa 15 MB.</div>
-          <div id="file-meta" class="file-meta is-hidden"></div>
+<hr>
+
+<main id="main">
+  <div class="title-block">
+    <h1>Translate a .docx file.</h1>
+    <span class="jp-subhead" lang="ja" style="margin-top:0;margin-bottom:1rem;">文書翻訳 · bunsho hon'yaku</span>
+    <p class="lede">Format stays intact. Your key goes only to the worker you configure — we never see it.</p>
+    <span class="lede-vi" lang="vi">Format giữ nguyên. API key chỉ gửi đến worker bạn cấu hình — chúng tôi không nhìn thấy.</span>
+  </div>
+
+  <aside class="demo-strip" aria-label="Quick demo option">
+    <p class="demo-msg">
+      <em>Quick demo:</em> 1 doc/day, no key needed.
+      <span class="caption" lang="vi"> · 1 file/ngày, không cần key.</span>
+    </p>
+    <button type="button" id="demo-btn" class="demo-btn" disabled aria-disabled="true">Try demo</button>
+  </aside>
+
+  <form id="translate-form" novalidate>
+
+    <!-- 01 · API key -->
+    <div class="field-group">
+      <div class="numeral" aria-hidden="true">01</div>
+      <div class="content">
+        <h2>API key</h2>
+        <span class="jp-subhead" lang="ja">鍵 · kagi</span>
+        <p class="caption">
+          Bring your own. Free keys:
+          <a href="https://openrouter.ai/?ref=nightskat" rel="noopener noreferrer">OpenRouter</a>,
+          <a href="https://aistudio.google.com/apikey" rel="noopener noreferrer">Google AI Studio</a>,
+          <a href="https://console.groq.com/keys" rel="noopener noreferrer">Groq</a>,
+          <a href="https://cloud.cerebras.ai" rel="noopener noreferrer">Cerebras</a>.
+        </p>
+        <label for="api-key" class="sr-only">API key</label>
+        <div class="key-row">
+          <input id="api-key" type="password" maxlength="200" autocomplete="off" spellcheck="false" placeholder="sk-or-v1-…">
+          <button type="button" id="toggle-key-visibility" class="icon-btn" aria-label="Hiện API key">show</button>
         </div>
-        <!-- Target language -->
-        <div class="field-group">
-          <label for="target-lang">Ngôn ngữ đích</label>
+        <div class="checkbox-row">
+          <input type="checkbox" id="clear-key-on-submit">
+          <label for="clear-key-on-submit">Clear key after submit · <span lang="vi">Xóa key sau khi gửi</span></label>
+        </div>
+      </div>
+    </div>
+
+    <!-- 02 · Provider & endpoint -->
+    <div class="field-group">
+      <div class="numeral" aria-hidden="true">02</div>
+      <div class="content field-stack">
+        <h2>Provider &amp; model</h2>
+        <span class="jp-subhead" lang="ja">機関 · kikan</span>
+        <div>
+          <label for="provider">Provider</label>
+          <select id="provider">
+            <option value="openrouter" selected>OpenRouter</option>
+            <option value="groq">Groq</option>
+            <option value="cerebras">Cerebras</option>
+            <option value="google">Google AI Studio</option>
+          </select>
+        </div>
+        <div>
+          <label for="model">Model</label>
+          <input id="model" type="text" placeholder="google/gemini-2.0-flash-exp:free" value="google/gemini-2.0-flash-exp:free" autocomplete="off" spellcheck="false">
+          <p class="caption sub-note">Free defaults shown. Override with any model the provider accepts.</p>
+        </div>
+        <div>
+          <label for="endpoint-url">Worker endpoint <span class="req">required</span></label>
+          <input id="endpoint-url" type="url" placeholder="https://your-worker.workers.dev/translate" required>
+          <p class="caption sub-note">Deploy the open-source worker to your Cloudflare account and paste its URL here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 · File & target -->
+    <div class="field-group">
+      <div class="numeral" aria-hidden="true">03</div>
+      <div class="content field-stack">
+        <h2>File &amp; target</h2>
+        <span class="jp-subhead" lang="ja">文書 · bunsho</span>
+        <input id="docx-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="sr-only">
+        <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Choose or drop a .docx file" aria-describedby="drop-help">
+          <p class="drop-headline" id="drop-help">Drop a .docx here</p>
+          <p class="drop-sub">or click to choose</p>
+        </div>
+        <div id="file-meta" class="caption" aria-live="polite"></div>
+        <div>
+          <label for="target-lang">Translate to</label>
           <select id="target-lang">
             <option value="vi">Tiếng Việt</option>
             <option value="en">English</option>
-            <option value="zh-CN">中文 (Simplified)</option>
             <option value="ja">日本語</option>
-            <option value="ko">한국어</option>
-            <option value="other">Khác...</option>
-          </select>
-          <label id="custom-lang-label" for="target-lang-custom" class="is-hidden">Mã ngôn ngữ tùy chỉnh</label>
-          <input id="target-lang-custom" type="text" placeholder="Mã ngôn ngữ (ví dụ: fr)" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label">
-        </div>
-        <!-- Free key helper -->
-        <details class="free-key-help">
-          <summary>Chưa có API key? Lấy miễn phí — không cần thẻ tín dụng</summary>
-          <div class="vendor-grid">
-            <a class="vendor-card" href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer">
-              <div class="v-name">OpenRouter <span class="v-tag recommended">đề xuất</span></div>
-              <div class="v-quota">Truy cập nhiều model free · ~50–200 yêu cầu/ngày (chưa nạp $)</div>
-            </a>
-            <a class="vendor-card" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">
-              <div class="v-name">Google AI Studio <span class="v-tag v2">v0.2</span></div>
-              <div class="v-quota">Gemini 2.5 Flash · ~1.000–1.500 yêu cầu/ngày · context 1M token</div>
-            </a>
-            <a class="vendor-card" href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">
-              <div class="v-name">Groq <span class="v-tag v2">v0.2</span></div>
-              <div class="v-quota">Llama 3.3 70B · 1.000 yêu cầu/ngày · inference siêu nhanh</div>
-            </a>
-            <a class="vendor-card" href="https://cloud.cerebras.ai" target="_blank" rel="noopener noreferrer">
-              <div class="v-name">Cerebras <span class="v-tag v2">v0.2</span></div>
-              <div class="v-quota">Llama 3.3 70B · 1.000.000 token/ngày · cực nhanh</div>
-            </a>
-          </div>
-          <p class="v-note">
-            v0.1 hỗ trợ trực tiếp OpenRouter / Anthropic / OpenAI. Google · Groq · Cerebras sẽ thêm trong v0.2.
-            Trong lúc chờ, dùng OpenRouter để truy cập các model free từ Google/Meta qua aggregator.
-          </p>
-        </details>
-        <!-- API key -->
-        <div class="field-group">
-          <label for="api-key">API Key</label>
-          <div style="display:flex;gap:0.5rem;align-items:center;">
-            <input id="api-key" type="password" maxlength="200" autocomplete="off" spellcheck="false" style="flex:1;">
-            <button type="button" id="toggle-key-visibility" aria-label="Hiện/Ẩn API key">👁️</button>
-          </div>
-          <label style="margin-top:0.25rem;">
-            <input type="checkbox" id="clear-key-on-submit">
-            Xóa API key sau khi gửi
-          </label>
-        </div>
-        <!-- Provider -->
-        <div class="field-group">
-          <label for="provider">Nhà cung cấp</label>
-          <select id="provider">
-            <option value="openrouter">OpenRouter (free models · đề xuất)</option>
-            <option value="anthropic">Anthropic (Claude)</option>
-            <option value="openai">OpenAI (GPT)</option>
+            <option value="fr">Français</option>
+            <option value="es">Español</option>
+            <option value="other">Custom…</option>
           </select>
         </div>
-        <!-- Advanced -->
-        <details class="field-group">
-          <summary>Cài đặt nâng cao</summary>
-          <label for="endpoint-url">Endpoint URL</label>
-          <input id="endpoint-url" type="url" placeholder="https://dich-web.<account>.workers.dev/translate" value="https://dich-web.<account>.workers.dev/translate">
-        </details>
-        <!-- Actions -->
-        <div class="field-group" style="display:flex;gap:0.5rem;">
-          <button type="submit" id="submit-btn">Dịch</button>
-          <button type="button" id="cancel-btn" class="is-hidden">Hủy</button>
-          <button type="button" id="retry-btn" class="is-hidden">Thử lại</button>
+        <div>
+          <label id="custom-lang-label" for="target-lang-custom" class="is-hidden">Custom language code (BCP-47)</label>
+          <input id="target-lang-custom" type="text" placeholder="e.g. de, pt-BR, zh-Hant" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label">
         </div>
-        <!-- Status -->
-        <div id="status-area" aria-live="polite"></div>
-        <div id="error-area" aria-live="assertive" class="is-hidden"></div>
       </div>
-    </form>
-  </section>
-</main>
-<footer>
-  <small>Miễn phí mãi mãi · Mã nguồn mở · File và API key chỉ được gửi tới endpoint đã cấu hình.</small>
-  <small>
-    <a href="https://github.com/nightskat/docshift-core" target="_blank" rel="noopener noreferrer">GitHub</a>
-    ·
-    <a href="https://github.com/sponsors/nightskat" target="_blank" rel="noopener noreferrer">GitHub Sponsors</a>
-  </small>
-  <a class="kofi-btn" href="https://ko-fi.com/nightskat" target="_blank" rel="noopener noreferrer" aria-label="Donate trên Ko-fi">
-    ☕ Mời mình một ly Ko-fi
-  </a>
-</footer>
+    </div>
 
-<script>
+    <!-- Submit -->
+    <div class="submit-row">
+      <button type="submit" id="submit-btn" class="text-btn submit">Translate</button>
+      <button type="button" id="cancel-btn" class="text-btn secondary is-hidden">Cancel</button>
+      <button type="button" id="retry-btn" class="text-btn secondary is-hidden">Retry</button>
+    </div>
+    <p class="submit-note">Processing happens between your browser and your worker. We don't proxy your file.</p>
+  </form>
+
+  <div id="status-area" aria-live="polite"></div>
+  <div id="error-area" class="is-hidden" role="alert" aria-live="assertive"></div>
+
+  <footer class="site">
+    <div class="brand">
+      <a href="/" class="wordmark">akebi<span class="stamp">木通</span></a>
+      <span class="caption" style="display:block;margin-top:0.25rem;">MIT · nightskat</span>
+    </div>
+    <div class="right">
+      <a href="/">Landing</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
+      <a href="https://www.npmjs.com/package/akebi" rel="noopener noreferrer">npm</a>
+      <a href="https://ko-fi.com/nightskat" rel="noopener noreferrer">Ko-fi</a>
+      <a href="https://github.com/sponsors/nightskat" rel="noopener noreferrer">Sponsors</a>
+    </div>
+    <div class="motto"><em>Pod splits. Fruit whole.</em>&nbsp;<span class="hanko" aria-hidden="true" title="通">通</span></div>
+  </footer>
+</main>
+
+<script id="app-logic">
 /* CONFIG */
 const MAX_SIZE = 15 * 1024 * 1024; // 15 MB
 const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -318,10 +489,10 @@ const REQUEST_TIMEOUT = 60000; // 60s
 
 /* STATE */
 let state = {
-  status: "idle",          // idle, submitting, success, error
+  status: "idle",
   file: null,
-  selectedLang: "vi",      // value from select
-  customLang: "",          // value from custom input
+  selectedLang: "vi",
+  customLang: "",
   provider: "openrouter",
   endpointUrl: "",
   clearKeyOnSubmit: false,
@@ -341,18 +512,23 @@ const apiKeyInput = document.getElementById("api-key");
 const toggleKeyBtn = document.getElementById("toggle-key-visibility");
 const clearKeyChk = document.getElementById("clear-key-on-submit");
 const providerSelect = document.getElementById("provider");
+const modelInput = document.getElementById("model");
 const endpointInput = document.getElementById("endpoint-url");
 const submitBtn = document.getElementById("submit-btn");
 const cancelBtn = document.getElementById("cancel-btn");
 const retryBtn = document.getElementById("retry-btn");
 const statusArea = document.getElementById("status-area");
 const errorArea = document.getElementById("error-area");
+const dropHeadline = document.querySelector(".drop-zone .drop-headline");
+const dropSub = document.querySelector(".drop-zone .drop-sub");
+const originalDropText = dropHeadline ? dropHeadline.textContent : "Drop a .docx here";
+const originalDropSub = dropSub ? dropSub.textContent : "or click to choose";
 
 /* VALIDATION */
 function validateFile(file){
   if(!file) return "Vui lòng chọn file .docx.";
   if(!file.name.toLowerCase().endsWith(".docx")) return "Chỉ hỗ trợ file .docx.";
-  if(file.size > MAX_SIZE) return "File vượt quá giới hạn 15 MB.";
+  if(file.size > MAX_SIZE) return "File vượt quá giới hạn 15 MB.";
   return "";
 }
 function validateLang(lang){
@@ -396,14 +572,27 @@ function downloadBlob(blob, filename){
 }
 
 /* RENDER */
-function render(){
-  // file meta
+function updateDropZone(){
+  if(!dropHeadline || !dropSub) return;
   if(state.file){
-    fileMeta.textContent = `${state.file.name} (${(state.file.size/1024/1024).toFixed(2)} MB)`;
+    dropHeadline.textContent = state.file.name;
+    dropSub.textContent = (state.file.size/1024/1024).toFixed(2) + " MB";
+  } else {
+    dropHeadline.textContent = originalDropText;
+    dropSub.textContent = originalDropSub;
+  }
+}
+
+function render(){
+  // file meta caption
+  if(state.file){
+    fileMeta.textContent = state.file.name + " · " + (state.file.size/1024/1024).toFixed(2) + " MB";
     fileMeta.classList.remove("is-hidden");
   } else {
+    fileMeta.textContent = "";
     fileMeta.classList.add("is-hidden");
   }
+  updateDropZone();
   // language UI
   if(state.selectedLang==="other"){
     targetCustom.classList.remove("is-hidden");
@@ -416,16 +605,17 @@ function render(){
   }
   // disable during submit
   const disabled = state.status==="submitting";
-  [fileInput,dropZone,targetSelect,targetCustom,apiKeyInput,providerSelect,endpointInput,submitBtn].forEach(el=>el.disabled=disabled);
+  [fileInput,targetSelect,targetCustom,apiKeyInput,providerSelect,modelInput,endpointInput,submitBtn].forEach(el=>el.disabled=disabled);
   cancelBtn.disabled = false;
-  // status area
-  statusArea.innerHTML = "";
+  // clear status area children
+  while(statusArea.firstChild) statusArea.removeChild(statusArea.firstChild);
   errorArea.classList.add("is-hidden");
+  errorArea.textContent = "";
   if(state.status==="submitting"){
-    const div = document.createElement("div");
-    div.className = "status-card";
-    div.innerHTML = '<div class="spinner" aria-hidden="true"></div><p>Đang tải lên và dịch…</p>';
-    statusArea.appendChild(div);
+    const line = document.createElement("p");
+    line.className = "status-line status-loading";
+    line.textContent = "Translating…  ·  Đang dịch…";
+    statusArea.appendChild(line);
     cancelBtn.classList.remove("is-hidden");
   } else if(state.status==="error"){
     errorArea.textContent = state.lastError;
@@ -433,52 +623,39 @@ function render(){
     retryBtn.classList.remove("is-hidden");
     cancelBtn.classList.add("is-hidden");
   } else if(state.status==="success"){
-    const div = document.createElement("div");
-    div.className = "status-card status-success";
-    div.textContent = "Dịch thành công! File sẽ tự động tải về.";
-    statusArea.appendChild(div);
+    const line = document.createElement("p");
+    line.className = "status-line status-success";
+    line.textContent = "Done — download started.  ·  Hoàn tất.";
+    statusArea.appendChild(line);
     retryBtn.classList.add("is-hidden");
     cancelBtn.classList.add("is-hidden");
-    showToast("Dịch thành công!");
   } else {
     retryBtn.classList.add("is-hidden");
     cancelBtn.classList.add("is-hidden");
   }
 }
 
-/* STATE UPDATE */
 function setState(patch){
   state = {...state, ...patch};
   render();
 }
 
-/* ACCESSIBILITY HELPERS */
 function focusFirstInvalid(){
-  if(!state.file){
-    dropZone.focus();
-    return;
-  }
-  if(state.selectedLang==="other" && validateLang(state.customLang.trim())){
-    targetCustom.focus();
-    return;
-  }
-  if(!apiKeyInput.value.trim()){
-    apiKeyInput.focus();
-    return;
-  }
+  if(!state.file){ dropZone.focus(); return; }
+  if(state.selectedLang==="other" && validateLang(state.customLang.trim())){ targetCustom.focus(); return; }
+  if(!apiKeyInput.value.trim()){ apiKeyInput.focus(); return; }
 }
 
 /* EVENTS */
 dropZone.addEventListener("click",()=>{ if(state.status!=="submitting") fileInput.click(); });
-dropZone.addEventListener("keydown",e=>{ if(state.status!=="submitting" && (e.key==="Enter"||e.key===" ")) fileInput.click(); });
+dropZone.addEventListener("keydown",e=>{ if(state.status!=="submitting" && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); fileInput.click(); } });
 dropZone.addEventListener("dragover",e=>{ e.preventDefault(); if(state.status!=="submitting") dropZone.classList.add("is-dragover"); });
 dropZone.addEventListener("dragleave",()=>{ dropZone.classList.remove("is-dragover"); });
 dropZone.addEventListener("drop",e=>{
   e.preventDefault();
   dropZone.classList.remove("is-dragover");
   if(state.status==="submitting") return;
-  const files = e.dataTransfer.files;
-  handleFilesSelection(files);
+  handleFilesSelection(e.dataTransfer.files);
 });
 fileInput.addEventListener("change",e=>{
   if(e.target.files.length) handleFilesSelection(e.target.files);
@@ -489,45 +666,39 @@ function handleFilesSelection(fileList){
   for(let i=0;i<fileList.length;i++){
     const f = fileList[i];
     const err = validateFile(f);
-    if(!err && !validFile){
-      validFile = f;
-    } else {
-      skipped++;
-    }
+    if(!err && !validFile){ validFile = f; }
+    else { skipped++; }
   }
   if(!validFile){
     setState({status:"error",lastError:"Không có file .docx hợp lệ trong danh sách.",file:null});
     return;
   }
   if(skipped>0){
-    // inform user but continue
-    setState({file:validFile,status:"file-selected",lastError:`Đã bỏ qua ${skipped} file không hợp lệ.`});
+    setState({file:validFile,status:"idle",lastError:""});
   } else {
-    setState({file:validFile,status:"file-selected",lastError:""});
+    setState({file:validFile,status:"idle",lastError:""});
   }
 }
 targetSelect.addEventListener("change",e=>setState({selectedLang:e.target.value, customLang:""}));
 targetCustom.addEventListener("input",e=>setState({customLang:e.target.value}));
-apiKeyInput.addEventListener("input",()=>{});
 toggleKeyBtn.addEventListener("click",()=>{
-  apiKeyInput.type = apiKeyInput.type==="password"?"text":"password";
+  const showing = apiKeyInput.type==="text";
+  apiKeyInput.type = showing ? "password" : "text";
+  toggleKeyBtn.textContent = showing ? "show" : "hide";
+  toggleKeyBtn.setAttribute("aria-label", showing ? "Hiện API key" : "Ẩn API key");
 });
 clearKeyChk.addEventListener("change",e=>setState({clearKeyOnSubmit:e.target.checked}));
 providerSelect.addEventListener("change",e=>setState({provider:e.target.value}));
 endpointInput.addEventListener("input",e=>setState({endpointUrl:e.target.value}));
 retryBtn.addEventListener("click",()=>setState({status:"idle",lastError:""}));
 cancelBtn.addEventListener("click",()=>{
-  if(state.abortController){
-    state.abortController.abort();
-  }
+  if(state.abortController){ state.abortController.abort(); }
   setState({status:"idle",lastError:"Yêu cầu đã bị hủy.", abortController:null});
 });
 
 /* ERROR MAPPING */
 function mapError(status, data){
-  if(status>=500){
-    return "Lỗi máy chủ, vui lòng thử lại sau.";
-  }
+  if(status>=500) return "Lỗi máy chủ, vui lòng thử lại sau.";
   if(data && typeof data.error==="string"){
     const known = {
       "Invalid API key":"API key không hợp lệ.",
@@ -542,7 +713,6 @@ function mapError(status, data){
 form.addEventListener("submit",async e=>{
   e.preventDefault();
   if(state.status==="submitting") return;
-  // validation
   if(!state.file){
     setState({status:"error",lastError:"Vui lòng chọn file .docx trước khi dịch."});
     focusFirstInvalid();
@@ -550,25 +720,13 @@ form.addEventListener("submit",async e=>{
   }
   const effectiveLang = state.selectedLang==="other"?state.customLang.trim():state.selectedLang;
   const langErr = validateLang(effectiveLang);
-  if(langErr){
-    setState({status:"error",lastError:langErr});
-    focusFirstInvalid();
-    return;
-  }
+  if(langErr){ setState({status:"error",lastError:langErr}); focusFirstInvalid(); return; }
   const apiKey = apiKeyInput.value.trim();
-  if(!apiKey){
-    setState({status:"error",lastError:"Vui lòng nhập API key."});
-    focusFirstInvalid();
-    return;
-  }
+  if(!apiKey){ setState({status:"error",lastError:"Vui lòng nhập API key."}); focusFirstInvalid(); return; }
   const endpoint = state.endpointUrl.trim()||endpointInput.placeholder;
   const epErr = validateEndpoint(endpoint);
-  if(epErr){
-    setState({status:"error",lastError:epErr});
-    focusFirstInvalid();
-    return;
-  }
-  // snapshot values
+  if(epErr){ setState({status:"error",lastError:epErr}); focusFirstInvalid(); return; }
+
   const fileSnapshot = state.file;
   const langSnapshot = effectiveLang;
   setState({status:"submitting", endpointUrl:endpoint, selectedLang:state.selectedLang, customLang:state.customLang, lastError:"", abortController:new AbortController()});
@@ -576,12 +734,7 @@ form.addEventListener("submit",async e=>{
   const timeoutId = setTimeout(()=>controller.abort(), REQUEST_TIMEOUT);
   try{
     const b64 = await encodeFileToBase64(fileSnapshot);
-    const payload = {
-      docx:b64,
-      targetLang:langSnapshot,
-      apiKey,
-      provider:state.provider
-    };
+    const payload = { docx:b64, targetLang:langSnapshot, apiKey, provider:state.provider, model: modelInput.value.trim() };
     const resp = await fetch(endpoint,{
       method:"POST",
       headers:{"Content-Type":"application/json"},
@@ -595,12 +748,8 @@ form.addEventListener("submit",async e=>{
       throw new Error(mapError(resp.status, errData));
     }
     let data;
-    try{ data = await resp.json(); }catch{
-      throw new Error("Phản hồi từ máy chủ không đúng định dạng JSON.");
-    }
-    if(!data.docx){
-      throw new Error("Phản hồi không chứa file đã dịch.");
-    }
+    try{ data = await resp.json(); }catch{ throw new Error("Phản hồi từ máy chủ không đúng định dạng JSON."); }
+    if(!data.docx){ throw new Error("Phản hồi không chứa file đã dịch."); }
     const blob = base64ToBlob(data.docx,DOCX_MIME);
     const filename = data.filename||fileSnapshot.name.replace(/\.docx$/i,"") + "_" + langSnapshot + ".docx";
     downloadBlob(blob,filename);
@@ -632,6 +781,7 @@ setState({
   selectedLang: targetSelect.value,
   customLang: ""
 });
+
 </script>
 </body>
 </html>

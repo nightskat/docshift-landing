@@ -1,384 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Akebi — Format-preserving DOCX translation</title>
-    <meta name="description" content="Akebi splits open, your formatting stays whole. Translate Word documents with any LLM (BYOK), without losing bold, italic, tables, or headers.">
+<meta charset="utf-8">
+<title>Akebi — Format-preserving DOCX translation</title>
+<meta name="description" content="Translate Word documents. Keep your formatting. Bring your own LLM key — bold, italic, tables, headers all stay intact. Free forever, MIT.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Akebi — Translate Word documents. Keep your formatting.">
+<meta property="og:description" content="Bring your own LLM key. Bold, italic, tables, headers all stay intact. Free forever, MIT.">
+<meta property="og:url" content="https://akebi.pages.dev/">
+<meta property="og:image" content="https://akebi.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Akebi — Translate Word documents. Keep your formatting.">
+<meta name="twitter:description" content="Bring your own LLM key. Bold, italic, tables, headers all stay intact. Free forever, MIT.">
+<meta name="twitter:image" content="https://akebi.pages.dev/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600&family=Noto+Serif+JP:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body:    'Manrope', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+  --font-jp:      'Noto Serif JP', serif;
+  --ink:        #1a1814;
+  --ink-soft:   #4a463e;
+  --ink-muted:  #8a857a;
+  --paper:      #faf7f2;
+  --paper-soft: #f4ede0;
+  --rule:       #d4cfc4;
+  --akebi:      #6b4a8c;
+  --akebi-deep: #3d2a52;
+  --shu:        #b91d22;
+  --shu-deep:   #7a1216;
+  --sumi:       #0f0d0a;
+  --display-xl: clamp(2.75rem, 6vw, 5rem);
+  --display-lg: clamp(2rem, 4vw, 3rem);
+  --display-md: 1.75rem;
+  --body-lg:    1.125rem;
+  --body:       1.0625rem;
+  --caption:    0.75rem;
+  --col:        min(720px, 92vw);
+  --col-wide:   min(880px, 94vw);
+  --gutter:     clamp(1.5rem, 4vw, 4rem);
+  --hairline:   1px solid var(--rule);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f0ebe2; --ink-soft: #c4bfb4; --ink-muted: #8a857a;
+    --paper: #14120f; --paper-soft: #1f1c17; --rule: #2d2a24;
+    --akebi: #b48ad6; --akebi-deep: #d4b3ee;
+    --shu: #e54d52; --shu-deep: #ff6f74; --sumi: #f0ebe2;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--paper); color: var(--ink); }
+body { font-family: var(--font-body); font-size: var(--body); line-height: 1.65; color: var(--ink); }
+p { color: var(--ink-soft); }
+a { color: var(--shu); text-decoration: none; transition: color .15s; }
+a:hover { color: var(--shu-deep); text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--shu); outline-offset: 2px;
+}
+em { font-style: italic; font-family: var(--font-display); }
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://akebi.dev/">
-    <meta property="og:title" content="Akebi — Format-preserving DOCX translation">
-    <meta property="og:description" content="Akebi splits open, your formatting stays whole. Translate Word documents with any LLM (BYOK), without losing bold, italic, tables, or headers.">
-    <meta property="og:image" content="https://akebi.dev/og-image.png">
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+a.skip-link:focus {
+  position: fixed; top: 0.75rem; left: 0.75rem;
+  width: auto; height: auto; padding: 0.5rem 0.85rem;
+  clip: auto; overflow: visible; white-space: normal;
+  background: var(--ink); color: var(--paper);
+  font-size: 0.875rem; z-index: 100; border-radius: 2px;
+}
 
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://akebi.dev/">
-    <meta name="twitter:title" content="Akebi — Format-preserving DOCX translation">
-    <meta name="twitter:description" content="Akebi splits open, your formatting stays whole. Translate Word documents with any LLM (BYOK), without losing bold, italic, tables, or headers.">
-    <meta name="twitter:image" content="https://akebi.dev/og-image.png">
-    <style>
-        :root {
-            --bg-color: #0f0f0f;
-            --text-color: #f5f5f5;
-            --accent-color: #6366f1;
-            --card-bg: #1a1a1a;
-            --border-color: #333;
-        }
+.container { max-width: var(--col); margin: 0 auto; padding: 0 var(--gutter); }
+.container-wide { max-width: var(--col-wide); margin: 0 auto; padding: 0 var(--gutter); }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+/* header */
+header.site {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding: 1.25rem var(--gutter);
+  max-width: var(--col-wide); margin: 0 auto;
+}
+.wordmark {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 1.125rem; color: var(--ink);
+}
+.wordmark .stamp {
+  font-family: var(--font-jp); font-size: 0.55em; color: var(--shu);
+  margin-left: 0.2rem; vertical-align: super; letter-spacing: 0.05em;
+}
+nav.site { display: flex; gap: 1.5rem; }
+nav.site a { font-size: 0.875rem; color: var(--ink-soft); }
 
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
+hr { border: none; border-top: var(--hairline); margin: 0; }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
+/* hero */
+.hero { padding: 3.5rem 0 3rem; }
+.hero h1 {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: var(--display-xl); color: var(--ink);
+  letter-spacing: -0.015em; line-height: 1.05;
+}
+.hero h1 + h1 { margin-top: 0.25rem; padding-left: 1.5rem; }
+.hero h1 + h1::before {
+  content: "— "; color: var(--ink-muted); margin-left: -1.5rem;
+}
+.hero .lede {
+  margin-top: 1.75rem;
+  font-size: var(--body-lg); max-width: 36rem;
+}
+.cta {
+  display: inline-block; margin-top: 1.75rem;
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 1.5rem; color: var(--shu);
+  text-decoration: underline; text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.cta:hover { color: var(--shu-deep); text-decoration-thickness: 1.5px; }
+.cta::after {
+  content: " →"; display: inline-block; margin-left: 0.15rem;
+  transition: transform .2s;
+}
+.cta:hover::after { transform: translateX(4px); }
 
-        header {
-            padding: 2rem 0;
-        }
+.byok-caption {
+  margin-top: 1rem;
+  font-size: 0.875rem; color: var(--ink-muted);
+}
+.byok-caption a { color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+.byok-caption a:hover { color: var(--shu); }
 
-        .header-title {
-            font-weight: 800;
-            font-size: 1.5rem;
-            color: var(--accent-color);
-        }
+/* sections — desktop: numeral in left gutter */
+section.numbered {
+  padding: 3rem 0;
+  border-top: var(--hairline);
+}
+.section-grid {
+  max-width: var(--col-wide); margin: 0 auto; padding: 0 var(--gutter);
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.numeral {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 3.5rem; line-height: 1; color: var(--ink-muted);
+  user-select: none;
+}
+.section-body { max-width: var(--col); }
+.section-body h2 {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: var(--display-md); color: var(--ink); line-height: 1.1;
+  margin-bottom: 1.25rem;
+}
+.section-body > * + * { margin-top: 1rem; }
 
+ol { list-style: none; padding-left: 0; }
+ol li { margin-bottom: 0.85rem; color: var(--ink-soft); }
+ol li strong { color: var(--ink); font-weight: 600; }
 
-        /* Hero Section */
-        .hero {
-            padding: 4rem 0;
-            text-align: center;
-        }
+blockquote {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  color: var(--ink); line-height: 1.35;
+  padding-left: 1.25rem; border-left: 2px solid var(--akebi);
+  margin: 0.5rem 0;
+}
+.jp-subhead {
+  display: block; margin-top: -0.5rem; margin-bottom: 1.25rem;
+  font-family: var(--font-jp); font-weight: 400;
+  font-size: 0.875rem; color: var(--ink-muted);
+  letter-spacing: 0.15em;
+}
 
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            letter-spacing: -0.025em;
-        }
+/* code block */
+.code-row {
+  display: flex; align-items: stretch; gap: 0;
+  background: var(--paper-soft);
+  border: var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+.code-row code {
+  flex: 1; padding: 1rem 1.25rem;
+  color: var(--ink);
+}
+.code-row .copy-btn {
+  border: none; border-left: var(--hairline);
+  background: transparent;
+  padding: 0 1.1rem; cursor: pointer;
+  font-family: var(--font-body); font-size: 0.8rem; font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--ink-muted);
+  transition: color .15s, background .15s;
+}
+.code-row .copy-btn:hover { color: var(--shu); background: var(--paper); }
+.hanko {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.6rem; height: 1.6rem;
+  background: var(--shu); color: var(--paper);
+  font-family: var(--font-jp); font-weight: 700;
+  font-size: 0.95rem; line-height: 1;
+  outline: 1px solid var(--paper); outline-offset: -3px;
+  vertical-align: middle;
+}
+#copy-status {
+  display: block; margin-top: 0.5rem;
+  font-size: 0.75rem; color: var(--ink-muted);
+  font-style: italic;
+  min-height: 1.2em;
+}
 
-        .hero p {
-            font-size: 1.25rem;
-            color: #a3a3a3;
-            max-width: 600px;
-            margin: 0 auto 2.5rem;
-        }
+@media (max-width: 640px) {
+  .section-grid { grid-template-columns: 1fr; gap: 0.5rem; }
+  .numeral { font-size: 2.25rem; }
+  .hero h1 + h1 { padding-left: 0; }
+  .hero h1 + h1::before { margin-left: 0; }
+}
 
-        .cta-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-        }
+/* footer */
+footer.site {
+  border-top: var(--hairline);
+  padding: 3rem var(--gutter) 2rem;
+  max-width: var(--col-wide); margin: 0 auto;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.footer-grid .col-links { display: flex; flex-direction: column; gap: 0.4rem; }
+.footer-grid .col-links a { font-size: 0.875rem; color: var(--ink-soft); }
+.footer-grid .col-motto {
+  text-align: right;
+  font-family: var(--font-display); font-style: italic;
+  font-size: 0.875rem; color: var(--ink-muted);
+  display: flex; align-items: center; justify-content: flex-end; gap: 0.75rem;
+}
+.footer-grid .col-mark .caption {
+  display: block; margin-top: 0.25rem;
+  font-size: 0.7rem; color: var(--ink-muted);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-grid .col-motto { text-align: left; }
+}
 
-        .copy-block {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            cursor: pointer;
-            position: relative;
-            transition: border-color 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .copy-block:hover {
-            border-color: var(--accent-color);
-        }
-
-        .copy-block::after {
-            content: 'Click to copy';
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #333;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            opacity: 0;
-            transition: opacity 0.2s;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        .copy-block:hover::after {
-            opacity: 1;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: opacity 0.2s;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-        }
-
-        /* How it works */
-        .section-title {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-            margin-bottom: 5rem;
-        }
-
-        .step, .feature-card {
-            background-color: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .step-num {
-            color: var(--accent-color);
-            font-weight: 800;
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .step h3 {
-            margin-bottom: 1rem;
-        }
-
-        /* Features */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 5rem;
-        }
-
-        .feature-card h3 {
-            margin-bottom: 0.75rem;
-            color: var(--accent-color);
-        }
-
-        /* Providers */
-        .providers {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-
-        .provider-list {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            flex-wrap: wrap;
-            font-weight: 600;
-            color: #a3a3a3;
-            font-size: 1.2rem;
-        }
-
-        /* Ko-fi Banner */
-        .kofi-banner {
-            background-color: var(--card-bg);
-            border: 1px solid #ff5f5f;
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-
-        .kofi-link {
-            color: #ff5f5f;
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        /* Footer */
-        footer {
-            border-top: 1px solid var(--border-color);
-            padding: 3rem 0;
-            text-align: center;
-            color: #737373;
-            font-size: 0.9rem;
-        }
-
-        footer a {
-            color: #a3a3a3;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            color: var(--accent-color);
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            .steps, .features {
-                grid-template-columns: 1fr;
-            }
-            .provider-list {
-                gap: 1.5rem;
-            }
-        }
-
-        /* Notification */
-        #notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--accent-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            display: none;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
+/* hero stagger fade-in (motion-safe) */
+@media (prefers-reduced-motion: no-preference) {
+  .hero h1, .hero .lede, .cta, .byok-caption {
+    opacity: 0; transform: translateY(0.6rem);
+    animation: fadeIn .65s forwards cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero h1:nth-of-type(1) { animation-delay: 0s; }
+  .hero h1:nth-of-type(2) { animation-delay: .08s; }
+  .hero .lede { animation-delay: .18s; }
+  .cta { animation-delay: .26s; }
+  .byok-caption { animation-delay: .34s; }
+}
+@keyframes fadeIn { to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="header-title">akebi</div>
-        </header>
+<a href="#main" class="sr-only skip-link">Skip to main content</a>
 
-        <section class="hero">
-            <h1>The akebi splits open.<br>Your formatting stays whole.</h1>
-            <p>Free forever · MIT open-source · bring your own LLM key. Translate Word documents without losing bold, italic, tables, or headers — the akebi way: pod cracks, fruit stays intact.</p>
-            <div class="cta-container">
-                <a href="/app.html" class="btn-primary">Open the web app →</a>
-                <div class="copy-block" id="npm-install" onclick="copyToClipboard('npm install @akebi/core')">
-                    <span>npm install @akebi/core</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </div>
-            </div>
-            <p style="margin-top:1rem; font-size:0.95rem; color:#888;">
-                Don't have an API key? Get one free (no credit card) from
-                <a href="https://openrouter.ai/keys" style="color:var(--accent-color);">OpenRouter</a>,
-                <a href="https://aistudio.google.com/apikey" style="color:var(--accent-color);">Google AI Studio</a>,
-                <a href="https://console.groq.com/keys" style="color:var(--accent-color);">Groq</a>, or
-                <a href="https://cloud.cerebras.ai" style="color:var(--accent-color);">Cerebras</a>.
-            </p>
-        </section>
+<header class="site">
+  <a href="/" class="wordmark">akebi<span class="stamp">木通</span></a>
+  <nav class="site">
+    <a href="/app.html">App</a>
+    <a href="https://github.com/nightskat/docshift-core">GitHub</a>
+    <a href="https://github.com/sponsors/nightskat">Sponsor</a>
+  </nav>
+</header>
+<hr>
 
-        <section id="how-it-works">
-            <h2 class="section-title">How it works</h2>
-            <div class="steps">
-                <div class="step">
-                    <span class="step-num">01</span>
-                    <h3>Extract</h3>
-                    <p>Text separated from formatting into a FormatMap, ensuring no content is lost.</p>
-                </div>
-                <div class="step">
-                    <span class="step-num">02</span>
-                    <h3>Translate</h3>
-                    <p>3-stage LLM pipeline (primer → translate → audit) for high-quality results.</p>
-                </div>
-                <div class="step">
-                    <span class="step-num">03</span>
-                    <h3>Rebuild</h3>
-                    <p>Original run structure restored — formatting untouched and perfectly preserved.</p>
-                </div>
-            </div>
-        </section>
+<main id="main">
+  <section class="hero container-wide">
+    <h1>Translate Word documents.</h1>
+    <h1>Keep your formatting.</h1>
+    <p class="lede">Bring your own LLM key. Free forever, MIT.</p>
+    <a href="/app.html" class="cta">Open the app</a>
+    <p class="byok-caption">
+      or get a free API key from
+      <a href="https://openrouter.ai/?ref=nightskat" rel="noopener noreferrer">OpenRouter</a>,
+      <a href="https://aistudio.google.com/apikey" rel="noopener noreferrer">Google&nbsp;AI&nbsp;Studio</a>,
+      <a href="https://console.groq.com/keys" rel="noopener noreferrer">Groq</a>, or
+      <a href="https://cloud.cerebras.ai" rel="noopener noreferrer">Cerebras</a>.
+    </p>
+  </section>
 
-        <section id="features">
-            <h2 class="section-title">Features</h2>
-            <div class="features">
-                <div class="feature-card">
-                    <h3>Format-safe</h3>
-                    <p>Bold, italic, headers, tables preserved with precision.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>BYOK · Free-friendly</h3>
-                    <p>Works with free-tier keys from OpenRouter, Google AI Studio, Groq, Cerebras. No credit card required for most.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>OSS</h3>
-                    <p>MIT license, zero telemetry. Privacy and transparency by design.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Universal</h3>
-                    <p>Any LLM via CoreProvider interface. Plug in any model you prefer.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="providers">
-            <h2 class="section-title">Supported providers</h2>
-            <div class="provider-list">
-                <span>OpenRouter</span>
-                <span>OpenAI</span>
-                <span>Anthropic</span>
-                <span>Claude</span>
-            </div>
-        </section>
-
-        <section class="kofi-banner">
-            <p>Free forever — but if this saved you time or money, <a href="https://ko-fi.com/nightskat" class="kofi-link">tip a coffee on Ko-fi ☕</a> or <a href="https://github.com/sponsors/nightskat" class="kofi-link">sponsor on GitHub ❤️</a>.</p>
-        </section>
-
-        <footer>
-            <div class="container">
-                <p>
-                    <a href="https://github.com/nightskat/docshift-core">GitHub</a> ·
-                    MIT License ·
-                    Made by Tuan Khuc
-                </p>
-            </div>
-        </footer>
+  <section class="numbered">
+    <div class="section-grid">
+      <div class="numeral" aria-hidden="true">01</div>
+      <div class="section-body">
+        <h2>How it works</h2>
+        <span class="jp-subhead" lang="ja">仕組み · shikumi</span>
+        <ol>
+          <li><strong>Extract</strong> — text is separated from formatting into a FormatMap, so nothing is lost.</li>
+          <li><strong>Translate</strong> — a three-stage LLM pipeline (primer → translate → audit) makes the call.</li>
+          <li><strong>Rebuild</strong> — original run structure restored, formatting untouched.</li>
+        </ol>
+      </div>
     </div>
+  </section>
 
-    <div id="notification">Copied to clipboard!</div>
+  <section class="numbered">
+    <div class="section-grid">
+      <div class="numeral" aria-hidden="true">02</div>
+      <div class="section-body">
+        <h2>Why it matters</h2>
+        <span class="jp-subhead" lang="ja">意義 · igi</span>
+        <p>Most translation tools flatten Word documents. Bold disappears. Tables collapse. Headers turn into body text. That's because they translate the text and rebuild the shell. Akebi reverses it: the shell stays intact, only the text inside changes.</p>
+        <p>And because you bring your own LLM key, the cost is yours and the data path is yours. We never see either.</p>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        const notify = document.getElementById('notification');
-        let notifyTimeoutId;
+  <section class="numbered">
+    <div class="section-grid">
+      <div class="numeral" aria-hidden="true">03</div>
+      <div class="section-body">
+        <h2>The metaphor</h2>
+        <span class="jp-subhead" lang="ja">比喩 · hiyu</span>
+        <blockquote>The akebi pod ripens, splits along its spine, and reveals the soft pulp inside — completely intact.</blockquote>
+        <p><a href="https://en.wikipedia.org/wiki/Akebia_quinata" rel="noopener noreferrer">Akebi</a> (木通) is a Japanese autumn fruit whose purple pod cracks open when ready. The pod splits. The fruit stays whole. That's the engineering metaphor.</p>
+      </div>
+    </div>
+  </section>
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                notify.style.display = 'block';
-                if (notifyTimeoutId) {
-                    clearTimeout(notifyTimeoutId);
-                }
-                notifyTimeoutId = setTimeout(() => {
-                    notify.style.display = 'none';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
-        }
-    </script>
+  <section class="numbered">
+    <div class="section-grid">
+      <div class="numeral" aria-hidden="true">04</div>
+      <div class="section-body">
+        <h2>Use it</h2>
+        <span class="jp-subhead" lang="ja">使う · tsukau</span>
+        <div class="code-row">
+          <code>npm install akebi</code>
+          <button type="button" class="copy-btn" id="copy-btn" aria-controls="copy-status">Copy</button>
+        </div>
+        <span id="copy-status" aria-live="polite"></span>
+        <p>or <a href="/app.html">open the web app</a> — no install required.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="footer-grid">
+    <div class="col-mark">
+      <span class="wordmark">akebi<span class="stamp">木通</span></span>
+      <span class="caption">MIT · nightskat · 2026</span>
+    </div>
+    <div class="col-links">
+      <a href="/app.html">App</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="https://github.com/nightskat/docshift-core">GitHub</a>
+      <a href="https://www.npmjs.com/package/akebi">npm</a>
+      <a href="https://github.com/sponsors/nightskat">Sponsors</a>
+      <a href="https://ko-fi.com/nightskat">Ko-fi</a>
+    </div>
+    <div class="col-motto">
+      <em>Pod splits. Fruit whole.</em>
+      <span class="hanko" aria-hidden="true" title="通 — to pass through">通</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const btn = document.getElementById('copy-btn');
+  const status = document.getElementById('copy-status');
+  if (!btn || !status) return;
+  const text = 'npm install akebi';
+  btn.addEventListener('click', function(){
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        status.textContent = 'Copied to clipboard.';
+        setTimeout(function(){ status.textContent = ''; }, 2500);
+      }).catch(function(){
+        status.textContent = 'Press Cmd/Ctrl+C to copy.';
+      });
+    } else {
+      status.textContent = 'Press Cmd/Ctrl+C to copy: ' + text;
+    }
+  });
+})();
+</script>
 </body>
 </html>
