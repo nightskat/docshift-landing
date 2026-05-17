@@ -113,6 +113,90 @@ details summary:focus-visible{
   border-radius:var(--radius);
   box-shadow:var(--shadow);
 }
+/* Free key helper */
+.free-key-help{
+  background:rgba(99,102,241,0.06);
+  border:1px solid var(--border-color);
+  border-radius:var(--radius);
+  padding:0.5rem 0.75rem;
+}
+.free-key-help summary{
+  cursor:pointer;
+  font-weight:600;
+  color:var(--accent-color);
+  padding:0.25rem 0;
+  list-style:none;
+}
+.free-key-help summary::-webkit-details-marker{display:none;}
+.free-key-help summary::before{content:"🎁 ";}
+.free-key-help[open] summary{margin-bottom:0.5rem;}
+.free-key-help .vendor-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:0.5rem;
+  margin-top:0.5rem;
+}
+.free-key-help .vendor-card{
+  display:block;
+  text-decoration:none;
+  color:var(--text-color);
+  background:rgba(0,0,0,0.25);
+  border:1px solid var(--border-color);
+  border-radius:var(--radius);
+  padding:0.6rem 0.75rem;
+  transition:border-color 0.15s, background 0.15s;
+}
+.free-key-help .vendor-card:hover,
+.free-key-help .vendor-card:focus-visible{
+  border-color:var(--accent-color);
+  background:rgba(99,102,241,0.1);
+  outline:none;
+}
+.free-key-help .v-name{
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:0.5rem;
+}
+.free-key-help .v-quota{
+  font-size:0.85rem;
+  color:var(--muted-text);
+  margin-top:0.2rem;
+}
+.free-key-help .v-tag{
+  font-size:0.7rem;
+  padding:1px 6px;
+  border-radius:999px;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  font-weight:700;
+}
+.v-tag.recommended{background:var(--accent-color);color:#fff;}
+.v-tag.v2{background:#3f3f46;color:var(--muted-text);}
+.free-key-help .v-note{
+  font-size:0.8rem;
+  color:var(--muted-text);
+  margin-top:0.5rem;
+  font-style:italic;
+}
+/* Footer enhancements */
+footer{display:flex;flex-direction:column;gap:0.5rem;align-items:center;}
+footer a{color:var(--accent-color);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+.kofi-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:0.4rem;
+  padding:0.4rem 0.9rem;
+  background:#13C3FF;
+  color:#fff;
+  border-radius:999px;
+  font-weight:600;
+  font-size:0.9rem;
+  text-decoration:none;
+}
+.kofi-btn:hover{background:#0fa8df;text-decoration:none;}
 </style>
 </head>
 <body>
@@ -148,6 +232,32 @@ details summary:focus-visible{
           <label id="custom-lang-label" for="target-lang-custom" class="is-hidden">Mã ngôn ngữ tùy chỉnh</label>
           <input id="target-lang-custom" type="text" placeholder="Mã ngôn ngữ (ví dụ: fr)" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label">
         </div>
+        <!-- Free key helper -->
+        <details class="free-key-help">
+          <summary>Chưa có API key? Lấy miễn phí — không cần thẻ tín dụng</summary>
+          <div class="vendor-grid">
+            <a class="vendor-card" href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer">
+              <div class="v-name">OpenRouter <span class="v-tag recommended">đề xuất</span></div>
+              <div class="v-quota">Truy cập nhiều model free · ~50–200 yêu cầu/ngày (chưa nạp $)</div>
+            </a>
+            <a class="vendor-card" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">
+              <div class="v-name">Google AI Studio <span class="v-tag v2">v0.2</span></div>
+              <div class="v-quota">Gemini 2.5 Flash · ~1.000–1.500 yêu cầu/ngày · context 1M token</div>
+            </a>
+            <a class="vendor-card" href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer">
+              <div class="v-name">Groq <span class="v-tag v2">v0.2</span></div>
+              <div class="v-quota">Llama 3.3 70B · 1.000 yêu cầu/ngày · inference siêu nhanh</div>
+            </a>
+            <a class="vendor-card" href="https://cloud.cerebras.ai" target="_blank" rel="noopener noreferrer">
+              <div class="v-name">Cerebras <span class="v-tag v2">v0.2</span></div>
+              <div class="v-quota">Llama 3.3 70B · 1.000.000 token/ngày · cực nhanh</div>
+            </a>
+          </div>
+          <p class="v-note">
+            v0.1 hỗ trợ trực tiếp OpenRouter / Anthropic / OpenAI. Google · Groq · Cerebras sẽ thêm trong v0.2.
+            Trong lúc chờ, dùng OpenRouter để truy cập các model free từ Google/Meta qua aggregator.
+          </p>
+        </details>
         <!-- API key -->
         <div class="field-group">
           <label for="api-key">API Key</label>
@@ -164,10 +274,9 @@ details summary:focus-visible{
         <div class="field-group">
           <label for="provider">Nhà cung cấp</label>
           <select id="provider">
-            <option value="openrouter">OpenRouter</option>
-            <option value="anthropic">Anthropic</option>
-            <option value="openai">OpenAI</option>
-            <option value="google">Google</option>
+            <option value="openrouter">OpenRouter (free models · đề xuất)</option>
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="openai">OpenAI (GPT)</option>
           </select>
         </div>
         <!-- Advanced -->
@@ -190,7 +299,15 @@ details summary:focus-visible{
   </section>
 </main>
 <footer>
-  <small>File và API key chỉ được gửi tới endpoint đã cấu hình.</small>
+  <small>Miễn phí mãi mãi · Mã nguồn mở · File và API key chỉ được gửi tới endpoint đã cấu hình.</small>
+  <small>
+    <a href="https://github.com/nightskat/docshift-core" target="_blank" rel="noopener noreferrer">GitHub</a>
+    ·
+    <a href="https://github.com/sponsors/nightskat" target="_blank" rel="noopener noreferrer">GitHub Sponsors</a>
+  </small>
+  <a class="kofi-btn" href="https://ko-fi.com/nightskat" target="_blank" rel="noopener noreferrer" aria-label="Donate trên Ko-fi">
+    ☕ Mời mình một ly Ko-fi
+  </a>
 </footer>
 
 <script>
