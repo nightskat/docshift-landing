@@ -342,12 +342,7 @@ footer.site {
       <div class="section-body">
         <h2>Use it</h2>
         <span class="jp-subhead" lang="ja">使う · tsukau</span>
-        <div class="code-row">
-          <code>npm install akebi</code>
-          <button type="button" class="copy-btn" id="copy-btn" aria-controls="copy-status">Copy</button>
-        </div>
-        <span id="copy-status" aria-live="polite"></span>
-        <p>or <a href="/app.html">open the web app</a> — no install required.</p>
+        <p><a href="/app.html" class="cta">Open the web app</a> — drop a .docx, get it back translated.</p>
       </div>
     </div>
   </section>
@@ -364,7 +359,6 @@ footer.site {
       <a href="/terms.html">Terms</a>
       <a href="/privacy.html">Privacy</a>
       <a href="https://github.com/nightskat/docshift-core">GitHub</a>
-      <a href="https://www.npmjs.com/package/akebi">npm</a>
       <a href="https://github.com/sponsors/nightskat">Sponsors</a>
       <a href="https://ko-fi.com/nightskat">Ko-fi</a>
     </div>
@@ -375,25 +369,5 @@ footer.site {
   </div>
 </footer>
 
-<script>
-(function(){
-  const btn = document.getElementById('copy-btn');
-  const status = document.getElementById('copy-status');
-  if (!btn || !status) return;
-  const text = 'npm install akebi';
-  btn.addEventListener('click', function(){
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function(){
-        status.textContent = 'Copied to clipboard.';
-        setTimeout(function(){ status.textContent = ''; }, 2500);
-      }).catch(function(){
-        status.textContent = 'Press Cmd/Ctrl+C to copy.';
-      });
-    } else {
-      status.textContent = 'Press Cmd/Ctrl+C to copy: ' + text;
-    }
-  });
-})();
-</script>
 </body>
 </html>
