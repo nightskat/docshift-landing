@@ -297,9 +297,9 @@ footer.site {
         <h2>How it works</h2>
         <span class="jp-subhead" lang="ja">仕組み · shikumi</span>
         <ol>
-          <li><strong>Extract</strong> — text is separated from formatting into a FormatMap, so nothing is lost.</li>
-          <li><strong>Translate</strong> — a three-stage LLM pipeline (primer → translate → audit) makes the call.</li>
-          <li><strong>Rebuild</strong> — original run structure restored, formatting untouched.</li>
+          <li><strong>Take out the text</strong> — separated from formatting and held aside, intact.</li>
+          <li><strong>Translate it</strong> — three passes: read for context, translate, audit.</li>
+          <li><strong>Put it back</strong> — formatting unchanged, exactly where it was.</li>
         </ol>
       </div>
     </div>
@@ -311,8 +311,8 @@ footer.site {
       <div class="section-body">
         <h2>Why it matters</h2>
         <span class="jp-subhead" lang="ja">意義 · igi</span>
-        <p>Most translation tools flatten Word documents. Bold disappears. Tables collapse. Headers turn into body text. That's because they translate the text and rebuild the shell. Akebi reverses it: the shell stays intact, only the text inside changes.</p>
-        <p>And because you bring your own LLM key, the cost is yours and the data path is yours. We never see either.</p>
+        <p>Most translation tools flatten Word documents. Bold disappears. Tables collapse. Headers turn into body text. They translate the text and rebuild the shell. Akebi reverses it: the shell stays intact, only the text inside changes.</p>
+        <p>Use the free demo, or bring your own AI key — your cost, your data path, never ours.</p>
       </div>
     </div>
   </section>
