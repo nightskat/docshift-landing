@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DocShift | Dịch file .docx</title>
+<style>
+:root{
+  --bg-color:#0f0f0f;
+  --text-color:#f5f5f5;
+  --accent-color:#6366f1;
+  --card-bg:#1a1a1a;
+  --border-color:#333;
+  --muted-text:#888;
+  --danger:#e53e3e;
+  --success:#38a169;
+  --focus-ring:#6366f1;
+  --radius:8px;
+  --shadow:0 2px 6px rgba(0,0,0,0.4);
+  --font-stack:"Be Vietnam Pro",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:var(--font-stack);
+  background:var(--bg-color);
+  color:var(--text-color);
+  line-height:1.5;
+}
+header,footer{padding:1rem 2rem;text-align:center;}
+header h1{margin:0;font-size:2rem;color:var(--accent-color);}
+main{max-width:1000px;margin:auto;padding:0 2rem;}
+.translator-card{
+  background:var(--card-bg);
+  border:1px solid var(--border-color);
+  border-radius:var(--radius);
+  padding:1.5rem;
+  box-shadow:var(--shadow);
+  margin-top:2rem;
+}
+.form-grid{display:grid;gap:1rem;}
+.field-group{display:flex;flex-direction:column;}
+label{margin-bottom:0.25rem;font-weight:600;}
+input,select,button,textarea{
+  padding:0.5rem;
+  border:1px solid var(--border-color);
+  border-radius:var(--radius);
+  background:#222;
+  color:var(--text-color);
+  font:inherit;
+}
+input:focus,select:focus,button:focus{
+  outline:none;
+  box-shadow:0 0 0 2px var(--focus-ring);
+}
+button{
+  cursor:pointer;
+  background:var(--accent-color);
+  border:none;
+  color:#fff;
+  font-weight:600;
+}
+button:disabled{
+  opacity:0.6;
+  cursor:not-allowed;
+}
+.drop-zone{
+  border:2px dashed var(--muted-text);
+  border-radius:var(--radius);
+  padding:2rem;
+  text-align:center;
+  cursor:pointer;
+  transition:background .2s;
+}
+.drop-zone.is-dragover{background:rgba(99,102,241,0.1);}
+.drop-zone:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 2px var(--focus-ring);
+}
+.file-meta{margin-top:0.5rem;font-size:0.9rem;color:var(--muted-text);}
+.status-card{
+  margin-top:1rem;
+  padding:0.75rem;
+  border-radius:var(--radius);
+}
+.status-success{background:rgba(56,161,105,0.2);color:var(--success);}
+.status-error{background:rgba(229,62,62,0.2);color:var(--danger);}
+.spinner{
+  border:4px solid rgba(255,255,255,0.2);
+  border-top:4px solid var(--accent-color);
+  border-radius:50%;
+  width:24px;height:24px;
+  animation:spin 1s linear infinite;
+  margin:auto;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.is-hidden{display:none;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+@media (prefers-reduced-motion:reduce){
+  .spinner{animation:none;}
+}
+details summary:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 2px var(--focus-ring);
+}
+.toast{
+  position:fixed;
+  bottom:1rem;
+  right:1rem;
+  background:var(--success);
+  color:#fff;
+  padding:0.75rem 1rem;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+</style>
+</head>
+<body>
+<header class="page-header">
+  <h1>DocShift</h1>
+  <p>Dịch file .docx sang ngôn ngữ bạn muốn</p>
+</header>
+<main class="app-shell">
+  <section class="translator-card">
+    <form id="translate-form" novalidate>
+      <div class="form-grid">
+        <!-- File input -->
+        <div class="field-group">
+          <label for="docx-file">Chọn file .docx</label>
+          <input id="docx-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="sr-only">
+          <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-describedby="drop-help">
+            Kéo thả file vào đây hoặc nhấn để chọn
+          </div>
+          <div id="drop-help" class="sr-only">Chỉ chấp nhận file .docx, tối đa 15 MB.</div>
+          <div id="file-meta" class="file-meta is-hidden"></div>
+        </div>
+        <!-- Target language -->
+        <div class="field-group">
+          <label for="target-lang">Ngôn ngữ đích</label>
+          <select id="target-lang">
+            <option value="vi">Tiếng Việt</option>
+            <option value="en">English</option>
+            <option value="zh-CN">中文 (Simplified)</option>
+            <option value="ja">日本語</option>
+            <option value="ko">한국어</option>
+            <option value="other">Khác...</option>
+          </select>
+          <label id="custom-lang-label" for="target-lang-custom" class="is-hidden">Mã ngôn ngữ tùy chỉnh</label>
+          <input id="target-lang-custom" type="text" placeholder="Mã ngôn ngữ (ví dụ: fr)" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label">
+        </div>
+        <!-- API key -->
+        <div class="field-group">
+          <label for="api-key">API Key</label>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <input id="api-key" type="password" maxlength="200" autocomplete="off" spellcheck="false" style="flex:1;">
+            <button type="button" id="toggle-key-visibility" aria-label="Hiện/Ẩn API key">👁️</button>
+          </div>
+          <label style="margin-top:0.25rem;">
+            <input type="checkbox" id="clear-key-on-submit">
+            Xóa API key sau khi gửi
+          </label>
+        </div>
+        <!-- Provider -->
+        <div class="field-group">
+          <label for="provider">Nhà cung cấp</label>
+          <select id="provider">
+            <option value="openrouter">OpenRouter</option>
+            <option value="anthropic">Anthropic</option>
+            <option value="openai">OpenAI</option>
+            <option value="google">Google</option>
+          </select>
+        </div>
+        <!-- Advanced -->
+        <details class="field-group">
+          <summary>Cài đặt nâng cao</summary>
+          <label for="endpoint-url">Endpoint URL</label>
+          <input id="endpoint-url" type="url" placeholder="https://dich-web.<account>.workers.dev/translate" value="https://dich-web.<account>.workers.dev/translate">
+        </details>
+        <!-- Actions -->
+        <div class="field-group" style="display:flex;gap:0.5rem;">
+          <button type="submit" id="submit-btn">Dịch</button>
+          <button type="button" id="cancel-btn" class="is-hidden">Hủy</button>
+          <button type="button" id="retry-btn" class="is-hidden">Thử lại</button>
+        </div>
+        <!-- Status -->
+        <div id="status-area" aria-live="polite"></div>
+        <div id="error-area" aria-live="assertive" class="is-hidden"></div>
+      </div>
+    </form>
+  </section>
+</main>
+<footer>
+  <small>File và API key chỉ được gửi tới endpoint đã cấu hình.</small>
+</footer>
+
+<script>
+/* CONFIG */
+const MAX_SIZE = 15 * 1024 * 1024; // 15 MB
+const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const REQUEST_TIMEOUT = 60000; // 60s
+
+/* STATE */
+let state = {
+  status: "idle",          // idle, submitting, success, error
+  file: null,
+  selectedLang: "vi",      // value from select
+  customLang: "",          // value from custom input
+  provider: "openrouter",
+  endpointUrl: "",
+  clearKeyOnSubmit: false,
+  lastError: "",
+  abortController: null
+};
+
+/* DOM */
+const form = document.getElementById("translate-form");
+const fileInput = document.getElementById("docx-file");
+const dropZone = document.getElementById("drop-zone");
+const fileMeta = document.getElementById("file-meta");
+const targetSelect = document.getElementById("target-lang");
+const targetCustom = document.getElementById("target-lang-custom");
+const customLabel = document.getElementById("custom-lang-label");
+const apiKeyInput = document.getElementById("api-key");
+const toggleKeyBtn = document.getElementById("toggle-key-visibility");
+const clearKeyChk = document.getElementById("clear-key-on-submit");
+const providerSelect = document.getElementById("provider");
+const endpointInput = document.getElementById("endpoint-url");
+const submitBtn = document.getElementById("submit-btn");
+const cancelBtn = document.getElementById("cancel-btn");
+const retryBtn = document.getElementById("retry-btn");
+const statusArea = document.getElementById("status-area");
+const errorArea = document.getElementById("error-area");
+
+/* VALIDATION */
+function validateFile(file){
+  if(!file) return "Vui lòng chọn file .docx.";
+  if(!file.name.toLowerCase().endsWith(".docx")) return "Chỉ hỗ trợ file .docx.";
+  if(file.size > MAX_SIZE) return "File vượt quá giới hạn 15 MB.";
+  return "";
+}
+function validateLang(lang){
+  const regex = /^[A-Za-z0-9_-]{1,50}$/;
+  return regex.test(lang) ? "" : "Mã ngôn ngữ không hợp lệ.";
+}
+function validateEndpoint(url){
+  try{ const u = new URL(url); return (u.protocol==="http:"||u.protocol==="https:") ? "" : "Endpoint không hợp lệ."; }
+  catch{ return "Endpoint không hợp lệ."; }
+}
+
+/* FILE IO */
+function encodeFileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> {
+      const result = String(reader.result||"");
+      const i = result.indexOf(",");
+      if(i===-1) return reject(new Error("Invalid data URL"));
+      resolve(result.slice(i+1));
+    };
+    reader.onerror = ()=> reject(new Error("File read failed"));
+    reader.readAsDataURL(file);
+  });
+}
+function base64ToBlob(b64,mime){
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+  return new Blob([bytes],{type:mime});
+}
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* RENDER */
+function render(){
+  // file meta
+  if(state.file){
+    fileMeta.textContent = `${state.file.name} (${(state.file.size/1024/1024).toFixed(2)} MB)`;
+    fileMeta.classList.remove("is-hidden");
+  } else {
+    fileMeta.classList.add("is-hidden");
+  }
+  // language UI
+  if(state.selectedLang==="other"){
+    targetCustom.classList.remove("is-hidden");
+    customLabel.classList.remove("is-hidden");
+    targetCustom.required = true;
+  } else {
+    targetCustom.classList.add("is-hidden");
+    customLabel.classList.add("is-hidden");
+    targetCustom.required = false;
+  }
+  // disable during submit
+  const disabled = state.status==="submitting";
+  [fileInput,dropZone,targetSelect,targetCustom,apiKeyInput,providerSelect,endpointInput,submitBtn].forEach(el=>el.disabled=disabled);
+  cancelBtn.disabled = false;
+  // status area
+  statusArea.innerHTML = "";
+  errorArea.classList.add("is-hidden");
+  if(state.status==="submitting"){
+    const div = document.createElement("div");
+    div.className = "status-card";
+    div.innerHTML = '<div class="spinner" aria-hidden="true"></div><p>Đang tải lên và dịch…</p>';
+    statusArea.appendChild(div);
+    cancelBtn.classList.remove("is-hidden");
+  } else if(state.status==="error"){
+    errorArea.textContent = state.lastError;
+    errorArea.classList.remove("is-hidden");
+    retryBtn.classList.remove("is-hidden");
+    cancelBtn.classList.add("is-hidden");
+  } else if(state.status==="success"){
+    const div = document.createElement("div");
+    div.className = "status-card status-success";
+    div.textContent = "Dịch thành công! File sẽ tự động tải về.";
+    statusArea.appendChild(div);
+    retryBtn.classList.add("is-hidden");
+    cancelBtn.classList.add("is-hidden");
+    showToast("Dịch thành công!");
+  } else {
+    retryBtn.classList.add("is-hidden");
+    cancelBtn.classList.add("is-hidden");
+  }
+}
+
+/* STATE UPDATE */
+function setState(patch){
+  state = {...state, ...patch};
+  render();
+}
+
+/* ACCESSIBILITY HELPERS */
+function focusFirstInvalid(){
+  if(!state.file){
+    dropZone.focus();
+    return;
+  }
+  if(state.selectedLang==="other" && validateLang(state.customLang.trim())){
+    targetCustom.focus();
+    return;
+  }
+  if(!apiKeyInput.value.trim()){
+    apiKeyInput.focus();
+    return;
+  }
+}
+
+/* EVENTS */
+dropZone.addEventListener("click",()=>{ if(state.status!=="submitting") fileInput.click(); });
+dropZone.addEventListener("keydown",e=>{ if(state.status!=="submitting" && (e.key==="Enter"||e.key===" ")) fileInput.click(); });
+dropZone.addEventListener("dragover",e=>{ e.preventDefault(); if(state.status!=="submitting") dropZone.classList.add("is-dragover"); });
+dropZone.addEventListener("dragleave",()=>{ dropZone.classList.remove("is-dragover"); });
+dropZone.addEventListener("drop",e=>{
+  e.preventDefault();
+  dropZone.classList.remove("is-dragover");
+  if(state.status==="submitting") return;
+  const files = e.dataTransfer.files;
+  handleFilesSelection(files);
+});
+fileInput.addEventListener("change",e=>{
+  if(e.target.files.length) handleFilesSelection(e.target.files);
+});
+function handleFilesSelection(fileList){
+  let validFile = null;
+  let skipped = 0;
+  for(let i=0;i<fileList.length;i++){
+    const f = fileList[i];
+    const err = validateFile(f);
+    if(!err && !validFile){
+      validFile = f;
+    } else {
+      skipped++;
+    }
+  }
+  if(!validFile){
+    setState({status:"error",lastError:"Không có file .docx hợp lệ trong danh sách.",file:null});
+    return;
+  }
+  if(skipped>0){
+    // inform user but continue
+    setState({file:validFile,status:"file-selected",lastError:`Đã bỏ qua ${skipped} file không hợp lệ.`});
+  } else {
+    setState({file:validFile,status:"file-selected",lastError:""});
+  }
+}
+targetSelect.addEventListener("change",e=>setState({selectedLang:e.target.value, customLang:""}));
+targetCustom.addEventListener("input",e=>setState({customLang:e.target.value}));
+apiKeyInput.addEventListener("input",()=>{});
+toggleKeyBtn.addEventListener("click",()=>{
+  apiKeyInput.type = apiKeyInput.type==="password"?"text":"password";
+});
+clearKeyChk.addEventListener("change",e=>setState({clearKeyOnSubmit:e.target.checked}));
+providerSelect.addEventListener("change",e=>setState({provider:e.target.value}));
+endpointInput.addEventListener("input",e=>setState({endpointUrl:e.target.value}));
+retryBtn.addEventListener("click",()=>setState({status:"idle",lastError:""}));
+cancelBtn.addEventListener("click",()=>{
+  if(state.abortController){
+    state.abortController.abort();
+  }
+  setState({status:"idle",lastError:"Yêu cầu đã bị hủy.", abortController:null});
+});
+
+/* ERROR MAPPING */
+function mapError(status, data){
+  if(status>=500){
+    return "Lỗi máy chủ, vui lòng thử lại sau.";
+  }
+  if(data && typeof data.error==="string"){
+    const known = {
+      "Invalid API key":"API key không hợp lệ.",
+      "Rate limit exceeded":"Vượt quá hạn mức, vui lòng chờ."
+    };
+    return known[data.error]||"Yêu cầu không hợp lệ.";
+  }
+  return "Đã xảy ra lỗi không xác định.";
+}
+
+/* FORM SUBMIT */
+form.addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(state.status==="submitting") return;
+  // validation
+  if(!state.file){
+    setState({status:"error",lastError:"Vui lòng chọn file .docx trước khi dịch."});
+    focusFirstInvalid();
+    return;
+  }
+  const effectiveLang = state.selectedLang==="other"?state.customLang.trim():state.selectedLang;
+  const langErr = validateLang(effectiveLang);
+  if(langErr){
+    setState({status:"error",lastError:langErr});
+    focusFirstInvalid();
+    return;
+  }
+  const apiKey = apiKeyInput.value.trim();
+  if(!apiKey){
+    setState({status:"error",lastError:"Vui lòng nhập API key."});
+    focusFirstInvalid();
+    return;
+  }
+  const endpoint = state.endpointUrl.trim()||endpointInput.placeholder;
+  const epErr = validateEndpoint(endpoint);
+  if(epErr){
+    setState({status:"error",lastError:epErr});
+    focusFirstInvalid();
+    return;
+  }
+  // snapshot values
+  const fileSnapshot = state.file;
+  const langSnapshot = effectiveLang;
+  setState({status:"submitting", endpointUrl:endpoint, selectedLang:state.selectedLang, customLang:state.customLang, lastError:"", abortController:new AbortController()});
+  const controller = state.abortController;
+  const timeoutId = setTimeout(()=>controller.abort(), REQUEST_TIMEOUT);
+  try{
+    const b64 = await encodeFileToBase64(fileSnapshot);
+    const payload = {
+      docx:b64,
+      targetLang:langSnapshot,
+      apiKey,
+      provider:state.provider
+    };
+    const resp = await fetch(endpoint,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    if(!resp.ok){
+      let errData = {};
+      try{ errData = await resp.json(); }catch{}
+      throw new Error(mapError(resp.status, errData));
+    }
+    let data;
+    try{ data = await resp.json(); }catch{
+      throw new Error("Phản hồi từ máy chủ không đúng định dạng JSON.");
+    }
+    if(!data.docx){
+      throw new Error("Phản hồi không chứa file đã dịch.");
+    }
+    const blob = base64ToBlob(data.docx,DOCX_MIME);
+    const filename = data.filename||fileSnapshot.name.replace(/\.docx$/i,"") + "_" + langSnapshot + ".docx";
+    downloadBlob(blob,filename);
+    setState({status:"success", abortController:null});
+  }catch(err){
+    if(err.name==="AbortError"){
+      setState({status:"error",lastError:"Yêu cầu đã bị hủy.", abortController:null});
+    }else{
+      setState({status:"error",lastError:err.message||"Đã xảy ra lỗi.", abortController:null});
+    }
+  }finally{
+    if(state.clearKeyOnSubmit) apiKeyInput.value="";
+  }
+});
+
+/* TOAST */
+function showToast(msg){
+  const toast = document.createElement("div");
+  toast.className="toast";
+  toast.textContent=msg;
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.remove(),4000);
+}
+
+/* INIT */
+setState({
+  endpointUrl: endpointInput.value.trim()||endpointInput.placeholder,
+  clearKeyOnSubmit: clearKeyChk.checked,
+  selectedLang: targetSelect.value,
+  customLang: ""
+});
+</script>
+</body>
+</html>
