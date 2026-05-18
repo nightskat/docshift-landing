@@ -2,31 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>
-(function(){
-  try {
-    var hasRedirected = sessionStorage.getItem('akebi-lang-redirected');
-    var lang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-    if (!hasRedirected && lang.startsWith('vi') && !window.location.pathname.startsWith('/vi')) {
-      sessionStorage.setItem('akebi-lang-redirected', '1');
-      var path = window.location.pathname;
-      var target = '/vi' + (path === '/' ? '/' : path);
-      window.location.replace(target);
-    }
-  } catch(e) { /* ignore storage errors */ }
-})();
-</script>
-<title>Akebi · Translate a .docx file</title>
-<meta name="description" content="Format-preserving DOCX translation. Drop a file, get it back translated.">
+<title>Akebi · Dịch file .docx</title>
+<meta name="description" content="Dịch DOCX giữ nguyên định dạng. Thả file vào, nhận lại bản dịch.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Akebi · Translate a .docx file">
-<meta property="og:description" content="Format-preserving DOCX translation. Drop a file, get it back translated.">
-<meta property="og:url" content="https://akebi.pages.dev/app">
+<meta property="og:title" content="Akebi · Dịch file .docx">
+<meta property="og:description" content="Dịch DOCX giữ nguyên định dạng. Thả file vào, nhận lại bản dịch.">
+<meta property="og:url" content="https://akebi.pages.dev/ứng dụng">
 <meta property="og:image" content="https://akebi.pages.dev/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Akebi · Translate a .docx file">
-<meta name="twitter:description" content="Format-preserving DOCX translation. Drop a file, get it back translated.">
+<meta name="twitter:title" content="Akebi · Dịch file .docx">
+<meta name="twitter:description" content="Dịch DOCX giữ nguyên định dạng. Thả file vào, nhận lại bản dịch.">
 <meta name="twitter:image" content="https://akebi.pages.dev/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -202,7 +188,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
 .lang-row { margin-top: 1.5rem; }
 
-/* primary action: Turnstile + Translate button */
+/* primary action: Turnstile + Dịch button */
 .primary-action {
   margin-top: 2rem;
   display: flex; flex-direction: column; gap: 1rem;
@@ -404,75 +390,75 @@ footer.site .motto {
 <a href="#main" class="sr-only skip-link">Skip to main content</a>
 
 <header class="site">
-  <a href="/" class="wordmark">akebi<span class="stamp">木通</span></a>
+  <a href="/vi/" class="wordmark">akebi<span class="stamp">木通</span></a>
   <span class="crumb">›</span>
-  <span class="crumb">app</span>
+  <span class="crumb">ứng dụng</span>
   <nav>
-    <a href="/">Landing</a>
+    <a href="/vi/">Trang chủ</a>
     <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
-    <a href="/vi/app.html" style="color: var(--shu);">VI</a>
+    <a href="../app.html" style="color: var(--shu);">EN</a>
   </nav>
 </header>
 <hr>
 
 <main id="main">
   <div class="title-block">
-    <h1>Translate a .docx file.</h1>
-    <span class="jp-subhead" lang="ja">文書翻訳 · bunsho hon'yaku</span>
+    <h1>Dịch một file .docx.</h1>
+    <span class="jp-subhead" lang="ja">Dịch thuật văn bản</span>
   </div>
 
   <form id="translate-form" novalidate>
     <!-- Primary: file -->
     <input id="docx-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="sr-only">
-    <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Choose or drop a .docx file" aria-describedby="drop-help">
-      <p class="drop-headline" id="drop-help">Drop a .docx here</p>
-      <p class="drop-sub">or click to choose</p>
+    <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Chọn hoặc thả file .docx" aria-describedby="drop-help">
+      <p class="drop-headline" id="drop-help">Thả file .docx vào đây</p>
+      <p class="drop-sub">hoặc click để chọn</p>
     </div>
     <div id="file-meta" class="caption is-hidden" aria-live="polite"></div>
 
     <!-- Primary: target language -->
     <div class="lang-row">
-      <label for="target-lang">Translate to</label>
+      <label for="target-lang">Dịch sang</label>
       <select id="target-lang">
         <option value="vi">Tiếng Việt</option>
         <option value="en">English</option>
         <option value="ja">日本語</option>
         <option value="fr">Français</option>
         <option value="es">Español</option>
-        <option value="other">Custom…</option>
+        <option value="other">Tùy chỉnh…</option>
       </select>
-      <label id="custom-lang-label" for="target-lang-custom" class="is-hidden" style="margin-top:0.5rem;">Custom language code (BCP-47)</label>
-      <input id="target-lang-custom" type="text" placeholder="e.g. de, pt-BR, zh-Hant" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label" style="margin-top:0.35rem;">
+      <label id="custom-lang-label" for="target-lang-custom" class="is-hidden" style="margin-top:0.5rem;">Mã ngôn ngữ tùy chỉnh (BCP-47)</label>
+      <input id="target-lang-custom" type="text" placeholder="ví dụ: de, pt-BR, zh-Hant" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label" style="margin-top:0.35rem;">
     </div>
 
-    <!-- Primary: Turnstile + Translate (free) -->
+    <!-- Primary: Turnstile + Dịch (free) -->
     <div class="primary-action">
       <div id="turnstile-mount" class="is-hidden"></div>
-      <button type="button" id="demo-btn" class="btn-primary">Translate</button>
-      <p class="primary-note">Free · 2 docs/day</p>
+      <button type="button" id="demo-btn" class="btn-primary">Dịch</button>
+      <p class="primary-note">Miễn phí · 2 tài liệu/ngày</p>
     </div>
 
     <!-- BYOK: collapsible advanced -->
     <details class="byok-section">
       <summary>
-        <span class="byok-title">Need more? Use OpenRouter</span>
-        <span class="byok-tagline">free tier too · pick any AI model</span>
+        <span class="byok-title">Cần nhiều hơn? Dùng OpenRouter</span>
+        <span class="byok-tagline">có cả gói miễn phí · chọn bất kỳ mô hình AI nào</span>
       </summary>
       <div class="byok-body">
         <p class="byok-pitch">
-          Want more than 2 files a day? Get a free key from <a href="https://openrouter.ai" rel="noopener noreferrer">OpenRouter</a> — they have a free tier too (1,000 req/day after a one-time $10 unlock), or pick stronger AI models (Claude, GPT-4, Llama 70B…) if you want.
+          Cần hơn 2 file/ngày? Lấy key miễn phí từ <a href="https://openrouter.ai" rel="noopener noreferrer">OpenRouter</a> — họ cũng có gói miễn phí (1.000 lượt/ngày sau khi nạp $10 một lần), hoặc chọn các mô hình AI mạnh hơn (Claude, GPT-4, Llama 70B…) nếu bạn muốn.
         </p>
 
         <div class="byok-guide">
-  <p class="byok-guide-title">How to use your own (free):</p>
+  <p class="byok-guide-title">Cách dùng key riêng của bạn (miễn phí):</p>
   <ol class="byok-guide-steps">
-    <li>Go to <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer">openrouter.ai</a> → sign up (Google login is easiest)</li>
-    <li>Click your avatar (top right) → "Keys"</li>
-    <li>Click "Create Key" → name it "Akebi" → Create</li>
-    <li>Copy the key (it starts with <code>sk-or-v1-…</code>)</li>
-    <li>Paste it below ↓</li>
+    <li>Truy cập <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer">openrouter.ai</a> → đăng ký (đăng nhập bằng Google là dễ nhất)</li>
+    <li>Click vào avatar (góc trên bên phải) → "Keys"</li>
+    <li>Click "Create Key" → đặt tên là "Akebi" → Create</li>
+    <li>Copy key (bắt đầu bằng <code>sk-or-v1-…</code>)</li>
+    <li>Dán vào ô bên dưới ↓</li>
   </ol>
-  <p class="byok-trust">Key cleared after job done.</p>
+  <p class="byok-trust">Key sẽ được xóa sau khi hoàn tất.</p>
 </div>
 
         <div class="field-stack">
@@ -480,43 +466,42 @@ footer.site .motto {
             <label for="api-key">API key</label>
             <div class="key-row">
               <input id="api-key" type="password" maxlength="200" autocomplete="off" spellcheck="false" placeholder="sk-or-v1-…">
-              <button type="button" id="toggle-key-visibility" class="icon-btn" aria-label="Show API key">show</button>
+              <button type="button" id="toggle-key-visibility" class="icon-btn" aria-label="Hiện API key">hiện</button>
             </div>
             <div class="checkbox-row">
               <input type="checkbox" id="clear-key-on-submit" checked>
-              <label for="clear-key-on-submit">Clear key after submit</label>
+              <label for="clear-key-on-submit">Xóa key sau khi gửi</label>
             </div>
           </div>
           <div>
-            <label for="model">AI Model</label>
+            <label for="model">Mô hình AI</label>
             <select id="model">
-              <option value="openai/gpt-oss-120b:free">Loading free AI models…</option>
+              <option value="openai/gpt-oss-120b:free">Đang tải các mô hình AI miễn phí…</option>
             </select>
-            <p class="caption sub-note byok-model-bench" id="model-bench-note">Sorted by my bench score (highest first). Auto-fetched from OpenRouter. <a href="https://openrouter.ai/models" target="_blank" rel="noopener noreferrer">See all →</a></p>
           </div>
         </div>
 
         <div class="byok-actions">
-          <button type="button" id="byok-btn" class="btn-secondary">Translate with my key</button>
-          <button type="button" id="retry-btn" class="cancel-btn is-hidden">Retry</button>
+          <button type="button" id="byok-btn" class="btn-secondary">Dịch bằng key của mình</button>
+          <button type="button" id="retry-btn" class="cancel-btn is-hidden">Thử lại</button>
         </div>
       </div>
     </details>
 
-    <button type="button" id="cancel-btn" class="cancel-btn is-hidden" style="margin-top:1rem;">Cancel</button>
+    <button type="button" id="cancel-btn" class="cancel-btn is-hidden" style="margin-top:1rem;">Hủy</button>
   </form>
 
   <div id="status-area" aria-live="polite"></div>
   <div id="error-area" class="is-hidden" role="alert" aria-live="assertive"></div>
 <footer class="site">
     <div class="brand">
-      <a href="/" class="wordmark">akebi<span class="stamp">木通</span></a>
+      <a href="/vi/" class="wordmark">akebi<span class="stamp">木通</span></a>
       <span class="caption" style="display:block;margin-top:0.25rem;">MIT · nightskat</span>
     </div>
     <div class="right">
-      <a href="/">Landing</a>
-      <a href="/terms.html">Terms</a>
-      <a href="/privacy.html">Privacy</a>
+      <a href="/vi/">Trang chủ</a>
+      <a href="/vi/terms.html">Terms</a>
+      <a href="/vi/privacy.html">Privacy</a>
       <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
       <a href="https://github.com/sponsors/nightskat" rel="noopener noreferrer">Sponsors</a>
       <a href="https://ko-fi.com/nightskat" rel="noopener noreferrer">Ko-fi</a>
@@ -579,25 +564,25 @@ const errorArea = document.getElementById("error-area");
 const turnstileMount = document.getElementById("turnstile-mount");
 const dropHeadline = document.querySelector(".drop-zone .drop-headline");
 const dropSub = document.querySelector(".drop-zone .drop-sub");
-const originalDropText = dropHeadline ? dropHeadline.textContent : "Drop a .docx here";
-const originalDropSub = dropSub ? dropSub.textContent : "or click to choose";
+const originalDropText = dropHeadline ? dropHeadline.textContent : "Thả file .docx vào đây";
+const originalDropSub = dropSub ? dropSub.textContent : "hoặc click để chọn";
 
 let turnstileWidgetId = null;
 let pendingDemoSubmit = false;
 
 /* VALIDATION */
 function validateFile(file){
-  if(!file) return "Please choose a .docx file.";
-  if(!file.name.toLowerCase().endsWith(".docx")) return "Only .docx files are supported.";
-  if(file.size > MAX_SIZE) return "File exceeds the 15 MB limit.";
+  if(!file) return "Vui lòng chọn một file .docx.";
+  if(!file.name.toLowerCase().endsWith(".docx")) return "Chỉ hỗ trợ định dạng file .docx.";
+  if(file.size > MAX_SIZE) return "File vượt quá giới hạn 15 MB.";
   return "";
 }
 function validateLang(lang){
-  return /^[A-Za-z0-9_-]{1,50}$/.test(lang) ? "" : "Invalid language code.";
+  return /^[A-Za-z0-9_-]{1,50}$/.test(lang) ? "" : "Mã ngôn ngữ không hợp lệ.";
 }
 function validateEndpoint(url){
-  try{ const u = new URL(url); return (u.protocol==="http:"||u.protocol==="https:") ? "" : "Invalid endpoint."; }
-  catch{ return "Invalid endpoint."; }
+  try{ const u = new URL(url); return (u.protocol==="http:"||u.protocol==="https:") ? "" : "Điểm cuối không hợp lệ."; }
+  catch{ return "Điểm cuối không hợp lệ."; }
 }
 function effectiveLang(){
   return state.selectedLang === "other" ? state.customLang.trim() : state.selectedLang;
@@ -613,7 +598,7 @@ function encodeFileToBase64(file){
       if(i===-1) return reject(new Error("Invalid data URL"));
       resolve(result.slice(i+1));
     };
-    reader.onerror = ()=> reject(new Error("File read failed"));
+    reader.onerror = ()=> reject(new Error("Đọc file thất bại"));
     reader.readAsDataURL(file);
   });
 }
@@ -676,8 +661,8 @@ function render(){
   if(state.status==="submitting"){
     const line = document.createElement("p");
     line.className = "status-line status-loading";
-    const modeLabel = state.lastMode === "byok" ? "with your key" : "via free demo";
-    line.textContent = "Translating " + modeLabel + " …";
+    const modeLabel = state.lastMode === "byok" ? "với key của bạn" : "qua bản demo miễn phí";
+    line.textContent = "Đang dịch " + modeLabel + " …";
     statusArea.appendChild(line);
     cancelBtn.classList.remove("is-hidden");
     retryBtn.classList.add("is-hidden");
@@ -689,18 +674,18 @@ function render(){
   } else if(state.status==="success"){
     const line = document.createElement("p");
     line.className = "status-line status-success";
-    line.textContent = "Done — download started.";
+    line.textContent = "Xong — đang bắt đầu tải xuống.";
     statusArea.appendChild(line);
     const tip = document.createElement("p");
     tip.className = "status-tip";
-    tip.appendChild(document.createTextNode("If it saved you time and you can — "));
+    tip.appendChild(document.createTextNode("Nếu nó giúp bạn tiết kiệm thời gian và bạn có khả năng — "));
     const tipLink = document.createElement("a");
     tipLink.href = "https://ko-fi.com/nightskat";
     tipLink.target = "_blank";
     tipLink.rel = "noopener noreferrer";
-    tipLink.textContent = "a coffee back";
+    tipLink.textContent = "một ly cà phê mời mình";
     tip.appendChild(tipLink);
-    tip.appendChild(document.createTextNode(" helps me trust the path I chose."));
+    tip.appendChild(document.createTextNode(" sẽ giúp mình tin tưởng hơn vào con đường đã chọn."));
     statusArea.appendChild(tip);
     retryBtn.classList.add("is-hidden");
     cancelBtn.classList.add("is-hidden");
@@ -736,7 +721,7 @@ function handleFilesSelection(fileList){
     if(!err && !validFile){ validFile = fileList[i]; break; }
   }
   if(!validFile){
-    setState({status:"error",lastError:"No valid .docx file.",file:null});
+    setState({status:"error",lastError:"Không có file .docx nào hợp lệ.",file:null});
     return;
   }
   setState({file:validFile,status:"idle",lastError:""});
@@ -744,16 +729,16 @@ function handleFilesSelection(fileList){
 targetSelect.addEventListener("change",e=>setState({selectedLang:e.target.value, customLang:""}));
 targetCustom.addEventListener("input",e=>setState({customLang:e.target.value}));
 toggleKeyBtn.addEventListener("click",()=>{
-  const showing = apiKeyInput.type==="text";
-  apiKeyInput.type = showing ? "password" : "text";
-  toggleKeyBtn.textContent = showing ? "show" : "hide";
-  toggleKeyBtn.setAttribute("aria-label", showing ? "Show API key" : "Hide API key");
+  const hiệning = apiKeyInput.type==="text";
+  apiKeyInput.type = hiệning ? "password" : "text";
+  toggleKeyBtn.textContent = hiệning ? "hiện" : "ẩn";
+  toggleKeyBtn.setAttribute("aria-label", hiệning ? "Hiện API key" : "Ẩn API key");
 });
 clearKeyChk.addEventListener("change",e=>setState({clearKeyOnSubmit:e.target.checked}));
 retryBtn.addEventListener("click",()=>setState({status:"idle",lastError:""}));
 cancelBtn.addEventListener("click",()=>{
   if(state.abortController){ state.abortController.abort(); }
-  setState({status:"idle",lastError:"Request canceled.", abortController:null});
+  setState({status:"idle",lastError:"Yêu cầu đã bị hủy.", abortController:null});
 });
 
 /* PRIMARY (DEMO) FLOW */
@@ -786,7 +771,7 @@ function mountTurnstile(){
     },
     "error-callback": function(){
       pendingDemoSubmit = false;
-      setState({status:"error", lastError:"Verification widget error — try again."});
+      setState({status:"error", lastError:"Lỗi tiện ích xác minh — vui lòng thử lại."});
     },
     "expired-callback": function(){ /* user must re-verify */ },
     theme: "auto",
@@ -808,7 +793,7 @@ demoBtn.addEventListener("click", function(){
 });
 
 async function submitDemo(token){
-  if(!state.file){ setState({status:"error", lastError:"Choose a file first."}); return; }
+  if(!state.file){ setState({status:"error", lastError:"Vui lòng chọn file trước."}); return; }
   const lang = effectiveLang();
   setState({status:"submitting", lastError:"", abortController: new AbortController(), lastMode: "demo"});
   const controller = state.abortController;
@@ -827,20 +812,20 @@ async function submitDemo(token){
       let errData = {};
       try{ errData = await resp.json(); }catch{}
       let msg = errData.error || "Demo request failed.";
-      if(resp.status === 429) msg = "Daily demo limit reached (2/day). Use your own key below.";
-      else if(resp.status === 503) msg = "Demo paused — daily AI quota reached. Use your own key.";
-      else if(resp.status === 403) msg = "Bot check failed — try again.";
+      if(resp.status === 429) msg = "Đã hết lượt demo hàng ngày (2 file/ngày). Vui lòng dùng key của riêng bạn bên dưới.";
+      else if(resp.status === 503) msg = "Bản demo tạm dừng — đã hết hạn mức AI hàng ngày. Hãy dùng key của riêng bạn.";
+      else if(resp.status === 403) msg = "Kiểm tra bot thất bại — vui lòng thử lại.";
       throw new Error(msg);
     }
     const data = await resp.json();
-    if(!data.docx) throw new Error("Response missing the translated file.");
+    if(!data.docx) throw new Error("Phản hồi thiếu file đã dịch.");
     const blob = base64ToBlob(data.docx, DOCX_MIME);
     const filename = data.filename || fileSnapshot.name.replace(/\.docx$/i,"") + "_" + lang + ".docx";
     downloadBlob(blob, filename);
     setState({status:"success", abortController:null});
   }catch(err){
     if(err.name === "AbortError"){
-      setState({status:"error", lastError:"Request canceled.", abortController:null});
+      setState({status:"error", lastError:"Yêu cầu đã bị hủy.", abortController:null});
     }else{
       setState({status:"error", lastError: err.message || "Something went wrong.", abortController:null});
     }
@@ -855,20 +840,20 @@ async function submitDemo(token){
 function preflightByok(){
   if(!preflightPrimary()) return false;
   const apiKey = apiKeyInput.value.trim();
-  if(!apiKey){ setState({status:"error", lastError:"Please enter an API key."}); apiKeyInput.focus(); return false; }
+  if(!apiKey){ setState({status:"error", lastError:"Vui lòng nhập API key."}); apiKeyInput.focus(); return false; }
   return { apiKey };
 }
 
 function mapByokError(status, data){
-  if(status>=500) return "Server error — please try again.";
+  if(status>=500) return "Lỗi máy chủ — vui lòng thử lại.";
   if(data && typeof data.error==="string"){
     const known = {
-      "Invalid API key":"Invalid API key.",
-      "Rate limit exceeded":"Rate limit hit — please wait."
+      "Invalid API key":"API key không hợp lệ.",
+      "Rate limit exceeded":"Vượt quá giới hạn lượt gọi — vui lòng chờ."
     };
-    return known[data.error]||data.error||"Invalid request.";
+    return known[data.error]||data.error||"Yêu cầu không hợp lệ.";
   }
-  return "Unknown error.";
+  return "Lỗi không xác định.";
 }
 
 byokBtn.addEventListener("click", async function(){
@@ -897,15 +882,15 @@ byokBtn.addEventListener("click", async function(){
       throw new Error(mapByokError(resp.status, errData));
     }
     let data;
-    try{ data = await resp.json(); }catch{ throw new Error("Server response was not valid JSON."); }
-    if(!data.docx){ throw new Error("Response missing the translated file."); }
+    try{ data = await resp.json(); }catch{ throw new Error("Phản hồi từ máy chủ không phải JSON hợp lệ."); }
+    if(!data.docx){ throw new Error("Phản hồi thiếu file đã dịch."); }
     const blob = base64ToBlob(data.docx,DOCX_MIME);
     const filename = data.filename||fileSnapshot.name.replace(/\.docx$/i,"") + "_" + lang + ".docx";
     downloadBlob(blob,filename);
     setState({status:"success", abortController:null});
   }catch(err){
     if(err.name==="AbortError"){
-      setState({status:"error", lastError:"Request canceled.", abortController:null});
+      setState({status:"error", lastError:"Yêu cầu đã bị hủy.", abortController:null});
     }else{
       setState({status:"error", lastError: err.message || "Something went wrong.", abortController:null});
     }

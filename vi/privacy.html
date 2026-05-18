@@ -2,22 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>
-(function(){
-  try {
-    var hasRedirected = sessionStorage.getItem('akebi-lang-redirected');
-    var lang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-    if (!hasRedirected && lang.startsWith('vi') && !window.location.pathname.startsWith('/vi')) {
-      sessionStorage.setItem('akebi-lang-redirected', '1');
-      var path = window.location.pathname;
-      var target = '/vi' + (path === '/' ? '/' : path);
-      window.location.replace(target);
-    }
-  } catch(e) { /* ignore storage errors */ }
-})();
-</script>
-<title>Terms · Akebi</title>
-<meta name="description" content="Terms of use for Akebi, the format-preserving DOCX translation tool.">
+<title>Quyền riêng tư · Akebi</title>
+<meta name="description" content="Chính sách bảo mật của Akebi, công cụ dịch DOCX giữ nguyên định dạng.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,76 +69,80 @@ footer.site { border-top: var(--hairline); padding: 2.25rem var(--gutter); max-w
 <a href="#main" class="sr-only skip-link">Skip to main content</a>
 
 <header class="site">
-  <a href="/" class="wordmark">akebi<span class="stamp">木通</span></a>
+  <a href="/vi/" class="wordmark">akebi<span class="stamp">木通</span></a>
   <nav class="site" aria-label="Primary">
-    <a href="/">Landing</a>
-    <a href="/app.html">App</a>
-    <a href="/terms.html" aria-current="page">Terms</a>
-    <a href="/privacy.html">Privacy</a>
+    <a href="/vi/">Landing</a>
+    <a href="/vi/app.html">App</a>
+    <a href="/vi/terms.html">Terms</a>
+    <a href="/vi/privacy.html" aria-current="page">Quyền riêng tư</a>
     <a href="https://github.com/nightskat/docshift-core">GitHub</a>
-    <a href="/vi/terms.html" style="color: var(--shu);">VI</a>
+    <a href="../privacy.html" style="color: var(--shu);">EN</a>
   </nav>
 </header>
 <hr>
 
 <main id="main">
   <div class="page-head">
-    <h1>Terms</h1>
-    <span class="jp-subhead" lang="ja">規約 · kiyaku</span>
+    <h1>Quyền riêng tư</h1>
+    <span class="jp-subhead" lang="ja">個人情報 · kojin jōhō</span>
   </div>
 
-  <section class="numbered" aria-labelledby="acceptance">
+  <section class="numbered" aria-labelledby="collect">
     <div class="section-grid">
       <div class="numeral" aria-hidden="true">01</div>
       <div class="section-body">
-        <h2 id="acceptance">Acceptance · 同意</h2>
-        <p>By using Akebi, you agree to these terms. Akebi is a format-preserving DOCX translation tool: it separates document text from layout, sends the text through a chosen translation path, and rebuilds the file for download. You remain responsible for the documents you upload, the language model you choose, and how you use the translated result. If these terms do not work for you, do not use the service.</p>
+        <h2 id="collect">Những gì mình thu thập</h2>
+        <ul>
+          <li>Gói demo: IP của máy khách để đếm giới hạn lượt dùng, được lưu trong 1 ngày rồi xóa.</li>
+          <li>Gói dùng key riêng: không thu thập gì cả. API key và file DOCX của bạn đi thẳng từ trình duyệt đến máy chủ xử lý; Akebi không hề nhìn thấy chúng.</li>
+          <li>Không cookie, không script phân tích, và không có các pixel theo dõi từ bên thứ ba.</li>
+          <li>Nhật ký truy cập máy chủ được giữ khoảng 24 giờ rồi tự động xóa.</li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <section class="numbered" aria-labelledby="acceptable-use">
+  <section class="numbered" aria-labelledby="never-collect">
     <div class="section-grid">
       <div class="numeral" aria-hidden="true">02</div>
       <div class="section-body">
-        <h2 id="acceptable-use">Acceptable use · 利用条件</h2>
+        <h2 id="never-collect">Những gì mình không bao giờ thu thập</h2>
         <ul>
-          <li>Do not upload documents containing PII, meaning personally identifiable information.</li>
-          <li>Do not translate copyrighted content unless you have the right to translate it.</li>
-          <li>The demo tier is rate-limited to 2 documents per day per IP and 15MB maximum. Abuse may result in a ban.</li>
-          <li>On the BYOK tier, your API key is your responsibility, including provider rate limits and cost.</li>
-          <li>Do not attempt to reverse-engineer, overload, or bypass the worker.</li>
+          <li>API key của bạn, chúng truyền từ trình duyệt đến máy chủ xử lý và bỏ qua Akebi.</li>
+          <li>Nội dung file DOCX. Luồng dùng key riêng sẽ bỏ qua Akebi; luồng demo sẽ dịch trực tiếp trong bộ nhớ và xóa ngay sau đó.</li>
+          <li>Kết quả bản dịch, chúng được trả về trình duyệt của bạn và không được lưu lại.</li>
+          <li>Tên, email, số điện thoại, hoặc thông tin tài khoản của bạn. Akebi không có hệ thống tài khoản.</li>
         </ul>
       </div>
     </div>
   </section>
 
-  <section class="numbered" aria-labelledby="no-warranty">
+  <section class="numbered" aria-labelledby="demo">
     <div class="section-grid">
       <div class="numeral" aria-hidden="true">03</div>
       <div class="section-body">
-        <h2 id="no-warranty">No warranty · 無保証</h2>
+        <h2 id="demo">Bản demo</h2>
         <ul>
-          <li>Translation quality depends on the chosen AI model; Akebi does not guarantee accuracy.</li>
-          <li>The service is provided as is, with no SLA or promise of availability.</li>
-          <li>Akebi is not liable for translation errors, lost documents, or downstream consequences.</li>
-          <li>Use Akebi for important documents at your own risk, and always proofread before relying on output.</li>
+          <li>File DOCX của bạn được xử lý tạm thời trong bộ nhớ trên máy chủ của mình và trả về cho trình duyệt của bạn.</li>
+          <li>File không bao giờ được ghi vào ổ đĩa hay hệ thống lưu trữ lâu dài.</li>
+          <li>Văn bản không được dùng để huấn luyện AI.</li>
+          <li>Khóa giới hạn lượt dùng (được băm từ IP) được lưu tạm 24 giờ rồi tự động hết hạn.</li>
         </ul>
       </div>
     </div>
   </section>
 
-  <section class="numbered" aria-labelledby="license-law">
+  <section class="numbered" aria-labelledby="rights">
     <div class="section-grid">
       <div class="numeral" aria-hidden="true">04</div>
       <div class="section-body">
-        <h2 id="license-law">MIT license, governing law · MIT・準拠法</h2>
+        <h2 id="rights">Quyền của bạn</h2>
         <ul>
-          <li>The code is MIT licensed: <a href="https://github.com/nightskat/docshift-core">github.com/nightskat/docshift-core</a>.</li>
-          <li>Disputes are governed by the jurisdiction of nightskat in Vietnam; Vietnamese law applies.</li>
-          <li>These terms may change. Continued use of Akebi after changes means you accept the updated terms.</li>
+          <li>Không có gì để xóa, vì Akebi không lưu trữ dữ liệu cá nhân.</li>
+          <li>Akebi là mã nguồn mở. Bạn có thể kiểm tra mã nguồn tại <a href="https://github.com/nightskat/dich-web">github.com/nightskat/dich-web</a>.</li>
+          <li>Nếu có thắc mắc hoặc câu hỏi, hãy tạo "issue" trên GitHub.</li>
         </ul>
-        <p><em>Last updated: 2026-05-17</em></p>
+        <p><em>Cập nhật lần cuối: 17/05/2026</em></p>
       </div>
     </div>
   </section>
@@ -160,8 +150,8 @@ footer.site { border-top: var(--hairline); padding: 2.25rem var(--gutter); max-w
 <footer class="site">
   <span>MIT · nightskat · 2026</span>
   <nav class="footer-links" aria-label="Footer" style="display:flex;gap:1.1rem;flex-wrap:wrap;">
-    <a href="/">Akebi</a>
-    <a href="/app.html">App</a>
+    <a href="/vi/">Akebi</a>
+    <a href="/vi/app.html">App</a>
     <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
     <a href="https://github.com/sponsors/nightskat" rel="noopener noreferrer">Sponsors</a>
     <a href="https://ko-fi.com/nightskat" rel="noopener noreferrer">Ko-fi</a>

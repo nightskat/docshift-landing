@@ -2,31 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<script>
-(function(){
-  try {
-    var hasRedirected = sessionStorage.getItem('akebi-lang-redirected');
-    var lang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-    if (!hasRedirected && lang.startsWith('vi') && !window.location.pathname.startsWith('/vi')) {
-      sessionStorage.setItem('akebi-lang-redirected', '1');
-      var path = window.location.pathname;
-      var target = '/vi' + (path === '/' ? '/' : path);
-      window.location.replace(target);
-    }
-  } catch(e) { /* ignore storage errors */ }
-})();
-</script>
-<title>Akebi — Format-preserving DOCX translation</title>
-<meta name="description" content="Translate Word documents. Keep your formatting. Bring your own AI key — bold, italic, tables, headers all stay intact. Free forever, MIT.">
+<title>Akebi — Dịch file DOCX giữ nguyên định dạng</title>
+<meta name="description" content="Dịch tài liệu Word. Giữ nguyên định dạng. Dùng key AI của riêng bạn — in đậm, in nghiêng, bảng biểu, tiêu đề đều được giữ nguyên. Miễn phí mãi mãi, MIT.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Akebi — Translate Word documents. Keep your formatting.">
-<meta property="og:description" content="Bring your own AI key. Bold, italic, tables, headers all stay intact. Free forever, MIT.">
+<meta property="og:title" content="Akebi — Dịch tài liệu Word. Giữ nguyên định dạng.">
+<meta property="og:description" content="Dùng key AI của riêng bạn. In đậm, in nghiêng, bảng biểu, tiêu đề đều được giữ nguyên. Miễn phí mãi mãi, MIT.">
 <meta property="og:url" content="https://akebi.pages.dev/">
 <meta property="og:image" content="https://akebi.pages.dev/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Akebi — Translate Word documents. Keep your formatting.">
-<meta name="twitter:description" content="Bring your own AI key. Bold, italic, tables, headers all stay intact. Free forever, MIT.">
+<meta name="twitter:title" content="Akebi — Dịch tài liệu Word. Giữ nguyên định dạng.">
+<meta name="twitter:description" content="Dùng key AI của riêng bạn. In đậm, in nghiêng, bảng biểu, tiêu đề đều được giữ nguyên. Miễn phí mãi mãi, MIT.">
 <meta name="twitter:image" content="https://akebi.pages.dev/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -285,33 +271,33 @@ footer.site {
 </style>
 </head>
 <body>
-<a href="#main" class="sr-only skip-link">Skip to main content</a>
+<a href="#main" class="sr-only skip-link">Chuyển đến nội dung chính</a>
 
 <header class="site">
-  <a href="/" class="wordmark">akebi<span class="stamp">木通</span></a>
+  <a href="/vi/" class="wordmark">akebi<span class="stamp">木通</span></a>
   <nav class="site">
-    <a href="/app.html">App</a>
+    <a href="/vi/app.html">Ứng dụng</a>
     <a href="https://github.com/nightskat/docshift-core">GitHub</a>
-    <a href="https://github.com/sponsors/nightskat">Sponsor</a>
-    <a href="/vi/" style="color: var(--shu);">VI</a>
+    <a href="https://github.com/sponsors/nightskat">Tài trợ</a>
+    <a href="../" style="color: var(--shu);">EN</a>
   </nav>
 </header>
 <hr>
 
 <main id="main">
   <section class="hero container-wide">
-    <h1>Translate Word documents.</h1>
-    <h1>Keep your formatting.</h1>
-    <a href="/app.html" class="cta">Open the app</a>
+    <h1>Dịch tài liệu Word.</h1>
+    <h1>Giữ nguyên định dạng.</h1>
+    <a href="/vi/app.html" class="cta">Mở ứng dụng</a>
   </section>
 
   <section class="numbered">
     <div class="section-grid">
       <div class="numeral" aria-hidden="true">01</div>
       <div class="section-body">
-        <h2>How it works</h2>
+        <h2>Cách thức hoạt động</h2>
         <span class="jp-subhead" lang="ja">仕組み · shikumi</span>
-        <p>Drop your Word file. Get it back translated. Layout untouched. That's the whole product.</p>
+        <p>Bỏ file Word vào. Nhận lại bản dịch. Bố cục nguyên vẹn. Đơn giản vậy thôi.</p>
       </div>
     </div>
   </section>
@@ -320,9 +306,9 @@ footer.site {
     <div class="section-grid">
       <div class="numeral" aria-hidden="true">02</div>
       <div class="section-body">
-        <h2>Why it matters</h2>
+        <h2>Tại sao lại cần?</h2>
         <span class="jp-subhead" lang="ja">意義 · igi</span>
-        <p>Most translators trash your formatting on the way. Akebi doesn't. That's the whole pitch.</p>
+        <p>Đa số các công cụ dịch thuật sẽ làm hỏng định dạng của bạn. Akebi thì không. Điểm mấu chốt nằm ở đó.</p>
       </div>
     </div>
   </section>
@@ -331,10 +317,10 @@ footer.site {
     <div class="section-grid">
       <div class="numeral" aria-hidden="true">03</div>
       <div class="section-body">
-        <h2>The metaphor</h2>
+        <h2>Phép ẩn dụ</h2>
         <span class="jp-subhead" lang="ja">比喩 · hiyu</span>
-        <blockquote>Yet another fruit company.</blockquote>
-        <p><a href="https://en.wikipedia.org/wiki/Akebia_quinata" rel="noopener noreferrer">Akebi</a> (木通) is a Japanese autumn fruit — purple pod cracks open, soft fruit inside.</p>
+        <blockquote>Lại thêm một công ty trái cây.</blockquote>
+        <p><a href="https://en.wikipedia.org/wiki/Akebia_quinata" rel="noopener noreferrer">Akebi</a> (木通) là một loại quả mùa thu của Nhật — vỏ tím nứt ra, bên trong là phần thịt mềm.</p>
       </div>
     </div>
   </section>
@@ -343,9 +329,9 @@ footer.site {
     <div class="section-grid">
       <div class="numeral" aria-hidden="true">04</div>
       <div class="section-body">
-        <h2>Use it</h2>
+        <h2>Sử dụng</h2>
         <span class="jp-subhead" lang="ja">使う · tsukau</span>
-        <p><a href="/app.html" class="cta">Open the web app</a> — drop a .docx, get it back translated.</p>
+        <p><a href="/vi/app.html" class="cta">Mở ứng dụng web</a> — kéo thả một file .docx, nhận lại bản đã dịch.</p>
       </div>
     </div>
   </section>
@@ -357,15 +343,15 @@ footer.site {
       <span class="caption">MIT · nightskat · 2026</span>
     </div>
     <div class="col-links">
-      <a href="/app.html">App</a>
-      <a href="/terms.html">Terms</a>
-      <a href="/privacy.html">Privacy</a>
+      <a href="/vi/app.html">Ứng dụng</a>
+      <a href="/vi/terms.html">Điều khoản</a>
+      <a href="/vi/privacy.html">Quyền riêng tư</a>
       <a href="https://github.com/nightskat/docshift-core">GitHub</a>
-      <a href="https://github.com/sponsors/nightskat">Sponsors</a>
+      <a href="https://github.com/sponsors/nightskat">Tài trợ</a>
       <a href="https://ko-fi.com/nightskat">Ko-fi</a>
     </div>
     <div class="col-motto">
-      <span class="hanko" aria-hidden="true" title="通 — to pass through">通</span>
+      <span class="hanko" aria-hidden="true" title="通 — xuyên suốt">通</span>
     </div>
   </div>
 </footer>

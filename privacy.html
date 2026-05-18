@@ -2,6 +2,20 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>
+(function(){
+  try {
+    var hasRedirected = sessionStorage.getItem('akebi-lang-redirected');
+    var lang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+    if (!hasRedirected && lang.startsWith('vi') && !window.location.pathname.startsWith('/vi')) {
+      sessionStorage.setItem('akebi-lang-redirected', '1');
+      var path = window.location.pathname;
+      var target = '/vi' + (path === '/' ? '/' : path);
+      window.location.replace(target);
+    }
+  } catch(e) { /* ignore storage errors */ }
+})();
+</script>
 <title>Privacy · Akebi</title>
 <meta name="description" content="Privacy policy for Akebi, the format-preserving DOCX translation tool.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -76,6 +90,7 @@ footer.site { border-top: var(--hairline); padding: 2.25rem var(--gutter); max-w
     <a href="/terms.html">Terms</a>
     <a href="/privacy.html" aria-current="page">Privacy</a>
     <a href="https://github.com/nightskat/docshift-core">GitHub</a>
+    <a href="/vi/privacy.html" style="color: var(--shu);">VI</a>
   </nav>
 </header>
 <hr>
@@ -84,7 +99,6 @@ footer.site { border-top: var(--hairline); padding: 2.25rem var(--gutter); max-w
   <div class="page-head">
     <h1>Privacy</h1>
     <span class="jp-subhead" lang="ja">個人情報 · kojin jōhō</span>
-    <p class="vn"><em>Akebi được thiết kế để lưu càng ít càng tốt: không tài khoản, không cookie, không analytics.</em></p>
   </div>
 
   <section class="numbered" aria-labelledby="collect">
@@ -93,10 +107,10 @@ footer.site { border-top: var(--hairline); padding: 2.25rem var(--gutter); max-w
       <div class="section-body">
         <h2 id="collect">What we collect · 収集内容</h2>
         <ul>
-          <li>Demo tier: client IP for the rate-limit counter, stored with a 1-day TTL in KV, then deleted.</li>
+          <li>Demo tier: client IP for the rate-limit counter, stored for 1 day, then deleted.</li>
           <li>BYOK tier: nothing. Your API key and DOCX file go directly from your browser to your configured endpoint; Akebi never sees them.</li>
           <li>No cookies, no analytics scripts, and no third-party tracking pixels.</li>
-          <li>Server access logs, using Cloudflare defaults, are retained for about 24 hours and then auto-delete.</li>
+          <li>Server access logs are retained for about 24 hours and then auto-delete.</li>
         </ul>
       </div>
     </div>
@@ -123,10 +137,10 @@ footer.site { border-top: var(--hairline); padding: 2.25rem var(--gutter); max-w
       <div class="section-body">
         <h2 id="demo">Demo tier specifics · デモ</h2>
         <ul>
-          <li>Your DOCX file is decoded in Worker memory, translated through Cloudflare Workers AI, and returned to your browser.</li>
-          <li>The file is never written to disk or KV.</li>
-          <li>Cloudflare Workers AI processes the text, but per Cloudflare's data policy, user inputs are not used for training.</li>
-          <li>The IP-hashed rate-limit key lives in Cloudflare KV for 24 hours, then auto-expires.</li>
+          <li>Your DOCX file is processed temporarily in memory on our servers and returned to your browser.</li>
+          <li>The file is never written to disk or long-term storage.</li>
+          <li>Text is not used for AI training.</li>
+          <li>The IP-hashed rate-limit key lives in temporary storage for 24 hours, then auto-expires.</li>
         </ul>
       </div>
     </div>
@@ -147,10 +161,20 @@ footer.site { border-top: var(--hairline); padding: 2.25rem var(--gutter); max-w
     </div>
   </section>
 </main>
-
 <footer class="site">
   <span>MIT · nightskat · 2026</span>
+  <nav class="footer-links" aria-label="Footer" style="display:flex;gap:1.1rem;flex-wrap:wrap;">
+    <a href="/">Akebi</a>
+    <a href="/app.html">App</a>
+    <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
+    <a href="https://github.com/sponsors/nightskat" rel="noopener noreferrer">Sponsors</a>
+    <a href="https://ko-fi.com/nightskat" rel="noopener noreferrer">Ko-fi</a>
+  </nav>
   <span class="hanko" aria-hidden="true" title="通 — to pass through">通</span>
 </footer>
+<section class="kofi-cta" style="text-align:center; padding:2rem 1rem 3rem; max-width:880px; margin:0 auto;">
+  <a href="https://ko-fi.com/nightskat" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:0.65rem 1.25rem; background:var(--shu); color:var(--paper); font-family:var(--font-display,Fraunces,serif); font-style:italic; font-size:1rem; border-radius:2px; text-decoration:none; transition:background .15s;" onmouseover="this.style.background='var(--shu-deep)'" onmouseout="this.style.background='var(--shu)'">☕ Tip</a>
+</section>
+
 </body>
 </html>
