@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Akebi · Dịch file .docx</title>
+<meta name="description" content="Dịch DOCX giữ nguyên định dạng. Thả file vào, nhận lại bản dịch.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Akebi · Dịch file .docx">
+<meta property="og:description" content="Dịch DOCX giữ nguyên định dạng. Thả file vào, nhận lại bản dịch.">
+<meta property="og:url" content="https://akebi.pages.dev/ứng dụng">
+<meta property="og:image" content="https://akebi.pages.dev/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Akebi · Dịch file .docx">
+<meta name="twitter:description" content="Dịch DOCX giữ nguyên định dạng. Thả file vào, nhận lại bản dịch.">
+<meta name="twitter:image" content="https://akebi.pages.dev/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400;1,500&family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400&family=Noto+Serif+JP:wght@400&display=swap" rel="stylesheet">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<style>
+:root {
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body:    'Manrope', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+  --font-jp:      'Noto Serif JP', serif;
+  --ink:        #1a1814;
+  --ink-soft:   #4a463e;
+  --ink-muted:  #8a857a;
+  --paper:      #faf7f2;
+  --paper-soft: #f4ede0;
+  --rule:       #d4cfc4;
+  --akebi:      #6b4a8c;
+  --akebi-deep: #3d2a52;
+  --shu:        #b91d22;
+  --shu-deep:   #7a1216;
+  --sumi:       #0f0d0a;
+  --live:       #5c8a4a;
+  --wait:       #c9882f;
+  --warn:       #b91d22;
+  --display-xl: clamp(3rem, 6vw, 5rem);
+  --display-lg: clamp(2rem, 4vw, 3rem);
+  --display-md: 1.75rem;
+  --body-lg:    1.125rem;
+  --body:       1.0625rem;
+  --caption:    0.75rem;
+  --col:        min(680px, 92vw);
+  --gutter:     clamp(1.5rem, 4vw, 4rem);
+  --hairline:   1px solid var(--rule);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f0ebe2; --ink-soft: #c4bfb4; --ink-muted: #8a857a;
+    --paper: #14120f; --paper-soft: #1f1c17; --rule: #2d2a24;
+    --akebi: #b48ad6; --akebi-deep: #d4b3ee;
+    --shu: #e54d52; --shu-deep: #ff6f74; --sumi: #f0ebe2;
+    --warn: #e54d52;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--paper); color: var(--ink); }
+body { font-family: var(--font-body); font-size: var(--body); line-height: 1.6; min-height: 100vh; }
+main { max-width: var(--col); margin: 0 auto; padding: 0 var(--gutter) 4rem; }
+
+h1, h2 { font-family: var(--font-display); font-style: italic; font-weight: 400; color: var(--ink); }
+h1 { font-size: var(--display-lg); letter-spacing: -0.01em; }
+h2 { font-size: var(--display-md); }
+p { color: var(--ink-soft); }
+a { color: var(--shu); text-decoration: none; transition: color .2s; }
+a:hover { color: var(--shu-deep); text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--shu);
+  outline-offset: 2px;
+}
+
+hr { border: none; border-top: var(--hairline); margin: 0; }
+em { font-style: italic; font-family: var(--font-display); }
+
+/* utilities */
+.is-hidden { display: none !important; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+a.skip-link:focus {
+  position: fixed; top: 0.75rem; left: 0.75rem;
+  width: auto; height: auto; padding: 0.5rem 0.85rem;
+  clip: auto; overflow: visible; white-space: normal;
+  background: var(--ink); color: var(--paper);
+  font-size: 0.875rem; z-index: 100; border-radius: 2px;
+}
+.caption { font-size: var(--caption); color: var(--ink-muted); letter-spacing: 0.02em; }
+
+/* header */
+header.site {
+  display: flex; align-items: baseline; gap: 0.4rem;
+  padding: 1.25rem var(--gutter);
+  max-width: var(--col); margin: 0 auto;
+  font-size: 0.875rem;
+}
+.wordmark {
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 1.125rem; color: var(--ink);
+}
+.wordmark .stamp {
+  font-family: var(--font-jp); font-size: 0.55em; color: var(--shu);
+  margin-left: 0.2rem; vertical-align: super; letter-spacing: 0.05em;
+}
+header.site .crumb { color: var(--ink-muted); }
+header.site nav { margin-left: auto; display: flex; gap: 1.25rem; }
+header.site nav a { color: var(--ink-soft); }
+
+/* page title */
+.title-block { margin-top: 2rem; margin-bottom: 2.5rem; }
+.title-block h1 { margin-bottom: 0.75rem; }
+
+.jp-subhead {
+  display: block; margin-top: -0.5rem; margin-bottom: 1rem;
+  font-family: var(--font-jp); font-weight: 400;
+  font-size: 0.825rem; color: var(--ink-muted);
+  letter-spacing: 0.15em;
+}
+
+/* form controls */
+label { display: block; margin-bottom: 0.35rem; font-size: 0.875rem; color: var(--ink-soft); font-weight: 500; }
+input[type="text"], input[type="password"], input[type="url"], select {
+  font: inherit; font-size: var(--body);
+  width: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--hairline);
+  border-radius: 2px;
+  padding: 0.65rem 0.85rem;
+  transition: border-color .15s;
+}
+input[type="text"]:focus, input[type="password"]:focus, input[type="url"]:focus, select:focus {
+  border-color: var(--shu);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(185, 29, 34, 0.12);
+}
+input[type="text"]:disabled, input[type="password"]:disabled, input[type="url"]:disabled, select:disabled {
+  opacity: 0.5; cursor: not-allowed;
+}
+select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a857a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.85rem center; padding-right: 2.25rem; }
+
+.field-stack > * + * { margin-top: 1rem; }
+.sub-note { margin-top: 0.35rem; }
+.req {
+  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-muted); font-weight: 400; margin-left: 0.5rem;
+}
+
+.key-row { display: flex; gap: 0.5rem; align-items: stretch; }
+.key-row input { flex: 1; }
+.icon-btn {
+  background: var(--paper); border: var(--hairline); border-radius: 2px;
+  padding: 0 0.85rem; cursor: pointer; color: var(--ink-muted);
+  font-family: var(--font-mono); font-size: 0.875rem;
+  transition: color .15s, border-color .15s;
+}
+.icon-btn:hover { color: var(--shu); border-color: var(--shu); }
+.checkbox-row { margin-top: 0.75rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--ink-soft); }
+.checkbox-row input { width: 1rem; height: 1rem; accent-color: var(--shu); }
+.checkbox-row label { display: inline; margin: 0; cursor: pointer; }
+
+/* drop-zone */
+.drop-zone {
+  border: 1px dashed var(--rule);
+  background: transparent;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.drop-zone:hover, .drop-zone:focus, .drop-zone.is-dragover {
+  border-style: solid;
+  border-color: var(--shu);
+  background: var(--paper-soft);
+  outline: none;
+}
+.drop-zone .drop-headline {
+  font-family: var(--font-display); font-style: italic;
+  font-size: var(--display-md); color: var(--ink);
+}
+.drop-zone .drop-sub { color: var(--ink-muted); font-size: 0.875rem; margin-top: 0.35rem; }
+.drop-zone .file-name { font-weight: 600; color: var(--ink); font-size: var(--body-lg); }
+.drop-zone .file-size { color: var(--ink-muted); font-size: 0.875rem; margin-top: 0.25rem; }
+
+.lang-row { margin-top: 1.5rem; }
+
+/* primary action: Turnstile + Dịch button */
+.primary-action {
+  margin-top: 2rem;
+  display: flex; flex-direction: column; gap: 1rem;
+  align-items: flex-start;
+}
+#turnstile-mount { min-height: 65px; }
+#turnstile-mount.is-hidden { min-height: 0; }
+.btn-primary {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 1.75rem; color: var(--shu);
+  transition: color .15s;
+}
+.btn-primary::after { content: " →"; transition: margin-left .2s; display: inline-block; }
+.btn-primary:hover:not(:disabled) { color: var(--shu-deep); }
+.btn-primary:hover:not(:disabled)::after { margin-left: 0.25rem; }
+.btn-primary:disabled { color: var(--ink-muted); cursor: not-allowed; }
+.btn-primary:disabled::after { content: " ⋯"; }
+
+.primary-note {
+  font-size: var(--caption); color: var(--ink-muted);
+  margin-top: 0.25rem;
+}
+
+/* BYOK collapsible */
+.byok-section {
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+  border-top: var(--hairline);
+}
+.byok-section summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex; align-items: baseline; gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+.byok-section summary::-webkit-details-marker { display: none; }
+.byok-section summary::before {
+  content: "▸";
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  display: inline-block;
+  transition: transform .2s;
+}
+.byok-section[open] summary::before { transform: rotate(90deg); }
+.byok-section .byok-title {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 1.25rem; color: var(--ink);
+}
+.byok-section .byok-tagline {
+  font-size: 0.875rem; color: var(--ink-muted);
+}
+.byok-body {
+  margin-top: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--paper-soft);
+}
+.byok-body p.byok-pitch {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem; color: var(--ink-soft);
+}
+.byok-body p.byok-pitch a { text-decoration: underline; text-underline-offset: 3px; }
+.byok-guide {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--paper-soft);
+  border-left: 2px solid var(--akebi);
+  font-size: 0.9rem;
+}
+.byok-guide-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+.byok-guide-steps {
+  list-style: decimal;
+  padding-left: 1.25rem;
+  color: var(--ink-soft);
+}
+.byok-guide-steps li { margin-bottom: 0.35rem; }
+.byok-guide-steps code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  background: var(--paper);
+  padding: 0.05rem 0.3rem;
+  border: 1px solid var(--rule);
+}
+.byok-trust {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  font-style: italic;
+}
+.byok-trust a { color: var(--ink-soft); text-decoration: underline; }
+.byok-model-bench code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  background: var(--paper-soft);
+  padding: 0.05rem 0.3rem;
+  border: 1px solid var(--rule);
+}
+.byok-actions {
+  margin-top: 1.5rem;
+  display: flex; align-items: baseline; gap: 1.25rem; flex-wrap: wrap;
+}
+.byok-actions .btn-secondary {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font-display); font-style: italic; font-weight: 400;
+  font-size: 1.15rem; color: var(--shu);
+  transition: color .15s;
+}
+.byok-actions .btn-secondary::after { content: " →"; transition: margin-left .2s; display: inline-block; }
+.byok-actions .btn-secondary:hover:not(:disabled) { color: var(--shu-deep); }
+.byok-actions .btn-secondary:hover:not(:disabled)::after { margin-left: 0.2rem; }
+.byok-actions .btn-secondary:disabled { color: var(--ink-muted); cursor: not-allowed; }
+.cancel-btn {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-size: 0.875rem; color: var(--ink-muted);
+  text-decoration: underline; text-underline-offset: 3px;
+  font-family: inherit;
+}
+.cancel-btn:hover { color: var(--ink); }
+
+/* status + error */
+#status-area:empty, #error-area.is-hidden { display: none; }
+.status-line {
+  margin-top: 2rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--wait);
+  font-size: 0.95rem; color: var(--ink-soft);
+  font-family: var(--font-display); font-style: italic;
+}
+.status-line.status-success { border-left-color: var(--live); color: var(--ink); }
+.status-tip {
+  margin-top: 1rem;
+  padding-left: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--ink-muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+.status-tip a {
+  color: var(--shu);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.status-tip a:hover { color: var(--shu-deep); }
+#error-area {
+  margin-top: 2rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--warn);
+  font-size: 0.95rem; color: var(--ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+.hanko {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 1.5rem; height: 1.5rem;
+  background: var(--shu); color: var(--paper);
+  font-family: var(--font-jp); font-weight: 700;
+  font-size: 0.9rem; line-height: 1;
+  outline: 1px solid var(--paper); outline-offset: -3px;
+  vertical-align: middle;
+}
+
+/* footer */
+footer.site {
+  border-top: var(--hairline);
+  margin-top: 4rem;
+  padding-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.875rem;
+}
+footer.site .right { display: flex; gap: 1.25rem; }
+footer.site .right a { color: var(--ink-soft); }
+footer.site .motto {
+  grid-column: 1 / -1;
+  text-align: center;
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--caption);
+  color: var(--ink-muted);
+}
+@media (max-width: 480px) {
+  footer.site { grid-template-columns: 1fr; }
+  footer.site .right { justify-content: flex-start; flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<a href="#main" class="sr-only skip-link">Skip to main content</a>
+
+<header class="site">
+  <a href="/vi/" class="wordmark">akebi<span class="stamp">木通</span></a>
+  <span class="crumb">›</span>
+  <span class="crumb">ứng dụng</span>
+  <nav>
+    <a href="/vi/">Trang chủ</a>
+    <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
+    <a href="../app.html" style="color: var(--shu);">EN</a>
+  </nav>
+</header>
+<hr>
+
+<main id="main">
+  <div class="title-block">
+    <h1>Dịch một file .docx.</h1>
+    <span class="jp-subhead" lang="ja">Dịch thuật văn bản</span>
+  </div>
+
+  <form id="translate-form" novalidate>
+    <!-- Primary: file -->
+    <input id="docx-file" type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="sr-only">
+    <div id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-label="Chọn hoặc thả file .docx" aria-describedby="drop-help">
+      <p class="drop-headline" id="drop-help">Thả file .docx vào đây</p>
+      <p class="drop-sub">hoặc click để chọn</p>
+    </div>
+    <div id="file-meta" class="caption is-hidden" aria-live="polite"></div>
+
+    <!-- Primary: target language -->
+    <div class="lang-row">
+      <label for="target-lang">Dịch sang</label>
+      <select id="target-lang">
+        <option value="vi">Tiếng Việt</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="other">Tùy chỉnh…</option>
+      </select>
+      <label id="custom-lang-label" for="target-lang-custom" class="is-hidden" style="margin-top:0.5rem;">Mã ngôn ngữ tùy chỉnh (BCP-47)</label>
+      <input id="target-lang-custom" type="text" placeholder="ví dụ: de, pt-BR, zh-Hant" maxlength="50" class="is-hidden" aria-describedby="custom-lang-label" style="margin-top:0.35rem;">
+    </div>
+
+    <!-- Primary: Turnstile + Dịch (free) -->
+    <div class="primary-action">
+      <div id="turnstile-mount" class="is-hidden"></div>
+      <button type="button" id="demo-btn" class="btn-primary">Dịch</button>
+      <p class="primary-note">Miễn phí · 2 tài liệu/ngày</p>
+    </div>
+
+    <!-- BYOK: collapsible advanced -->
+    <details class="byok-section">
+      <summary>
+        <span class="byok-title">Cần nhiều hơn? Dùng OpenRouter</span>
+        <span class="byok-tagline">có cả gói miễn phí · chọn bất kỳ mô hình AI nào</span>
+      </summary>
+      <div class="byok-body">
+        <p class="byok-pitch">
+          Cần hơn 2 file/ngày? Lấy key miễn phí từ <a href="https://openrouter.ai" rel="noopener noreferrer">OpenRouter</a> — họ cũng có gói miễn phí (1.000 lượt/ngày sau khi nạp $10 một lần), hoặc chọn các mô hình AI mạnh hơn (Claude, GPT-4, Llama 70B…) nếu bạn muốn.
+        </p>
+
+        <div class="byok-guide">
+  <p class="byok-guide-title">Cách dùng key riêng của bạn (miễn phí):</p>
+  <ol class="byok-guide-steps">
+    <li>Truy cập <a href="https://openrouter.ai" target="_blank" rel="noopener noreferrer">openrouter.ai</a> → đăng ký (đăng nhập bằng Google là dễ nhất)</li>
+    <li>Click vào avatar (góc trên bên phải) → "Keys"</li>
+    <li>Click "Create Key" → đặt tên là "Akebi" → Create</li>
+    <li>Copy key (bắt đầu bằng <code>sk-or-v1-…</code>)</li>
+    <li>Dán vào ô bên dưới ↓</li>
+  </ol>
+  <p class="byok-trust">Key sẽ được xóa sau khi hoàn tất.</p>
+</div>
+
+        <div class="field-stack">
+          <div>
+            <label for="api-key">API key</label>
+            <div class="key-row">
+              <input id="api-key" type="password" maxlength="200" autocomplete="off" spellcheck="false" placeholder="sk-or-v1-…">
+              <button type="button" id="toggle-key-visibility" class="icon-btn" aria-label="Hiện API key">hiện</button>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="clear-key-on-submit" checked>
+              <label for="clear-key-on-submit">Xóa key sau khi gửi</label>
+            </div>
+          </div>
+          <div>
+            <label for="model">Mô hình AI</label>
+            <select id="model">
+              <option value="openai/gpt-oss-120b:free">Đang tải các mô hình AI miễn phí…</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="byok-actions">
+          <button type="button" id="byok-btn" class="btn-secondary">Dịch bằng key của mình</button>
+          <button type="button" id="retry-btn" class="cancel-btn is-hidden">Thử lại</button>
+        </div>
+      </div>
+    </details>
+
+    <button type="button" id="cancel-btn" class="cancel-btn is-hidden" style="margin-top:1rem;">Hủy</button>
+  </form>
+
+  <div id="status-area" aria-live="polite"></div>
+  <div id="error-area" class="is-hidden" role="alert" aria-live="assertive"></div>
+<footer class="site">
+    <div class="brand">
+      <a href="/vi/" class="wordmark">akebi<span class="stamp">木通</span></a>
+      <span class="caption" style="display:block;margin-top:0.25rem;">MIT · nightskat</span>
+    </div>
+    <div class="right">
+      <a href="/vi/">Trang chủ</a>
+      <a href="/vi/terms.html">Terms</a>
+      <a href="/vi/privacy.html">Privacy</a>
+      <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.com/sponsors/nightskat" rel="noopener noreferrer">Sponsors</a>
+      <a href="https://ko-fi.com/nightskat" rel="noopener noreferrer">Ko-fi</a>
+    </div>
+    <div class="motto"><span class="hanko" aria-hidden="true" title="通">通</span></div>
+  </footer>
+<section class="kofi-cta" style="text-align:center; padding:2rem 1rem 3rem; max-width:880px; margin:0 auto;">
+  <a href="https://ko-fi.com/nightskat" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:0.6rem 1.25rem; background:transparent; color:var(--shu); border:1.5px solid var(--shu); font-family:var(--font-display,Fraunces,serif); font-style:italic; font-size:1rem; border-radius:2px; text-decoration:none; transition:background .15s, color .15s; letter-spacing:0.02em;" onmouseover="this.style.background='var(--shu)'; this.style.color='var(--paper)'" onmouseout="this.style.background='transparent'; this.style.color='var(--shu)'">☕ Tip</a>
+</section>
+
+</main>
+
+<script id="app-logic">
+/* CONFIG */
+const MAX_SIZE = 15 * 1024 * 1024;
+const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const REQUEST_TIMEOUT = 60000;
+const DEMO_ENDPOINT = "https://dich-web.nightskat.workers.dev/translate-demo";
+const BYOK_ENDPOINT = "https://dich-web.nightskat.workers.dev/translate";
+const OR_MODELS_URL = "https://openrouter.ai/api/v1/models";
+const BENCH_SCORES = {
+  "openai/gpt-oss-120b:free": 4.9,
+  "minimax/minimax-m2.5:free": 4.9,
+  "poolside/laguna-xs.2:free": 4.8,
+  "poolside/laguna-m.1:free": 4.6,
+};
+const FALLBACK_FREE_MODELS = Object.keys(BENCH_SCORES);
+const TURNSTILE_SITE_KEY = "0x4AAAAAADRIwiBZzB6QlwY3";
+
+/* STATE */
+let state = {
+  status: "idle",
+  file: null,
+  selectedLang: "vi",
+  customLang: "",
+  clearKeyOnSubmit: false,
+  lastError: "",
+  abortController: null,
+  lastMode: null
+};
+
+/* DOM */
+const form = document.getElementById("translate-form");
+const fileInput = document.getElementById("docx-file");
+const dropZone = document.getElementById("drop-zone");
+const fileMeta = document.getElementById("file-meta");
+const targetSelect = document.getElementById("target-lang");
+const targetCustom = document.getElementById("target-lang-custom");
+const customLabel = document.getElementById("custom-lang-label");
+const apiKeyInput = document.getElementById("api-key");
+const toggleKeyBtn = document.getElementById("toggle-key-visibility");
+const clearKeyChk = document.getElementById("clear-key-on-submit");
+const modelInput = document.getElementById("model");
+const demoBtn = document.getElementById("demo-btn");
+const byokBtn = document.getElementById("byok-btn");
+const cancelBtn = document.getElementById("cancel-btn");
+const retryBtn = document.getElementById("retry-btn");
+const statusArea = document.getElementById("status-area");
+const errorArea = document.getElementById("error-area");
+const turnstileMount = document.getElementById("turnstile-mount");
+const dropHeadline = document.querySelector(".drop-zone .drop-headline");
+const dropSub = document.querySelector(".drop-zone .drop-sub");
+const originalDropText = dropHeadline ? dropHeadline.textContent : "Thả file .docx vào đây";
+const originalDropSub = dropSub ? dropSub.textContent : "hoặc click để chọn";
+
+let turnstileWidgetId = null;
+let pendingDemoSubmit = false;
+
+/* VALIDATION */
+function validateFile(file){
+  if(!file) return "Vui lòng chọn một file .docx.";
+  if(!file.name.toLowerCase().endsWith(".docx")) return "Chỉ hỗ trợ định dạng file .docx.";
+  if(file.size > MAX_SIZE) return "File vượt quá giới hạn 15 MB.";
+  return "";
+}
+function validateLang(lang){
+  return /^[A-Za-z0-9_-]{1,50}$/.test(lang) ? "" : "Mã ngôn ngữ không hợp lệ.";
+}
+function validateEndpoint(url){
+  try{ const u = new URL(url); return (u.protocol==="http:"||u.protocol==="https:") ? "" : "Điểm cuối không hợp lệ."; }
+  catch{ return "Điểm cuối không hợp lệ."; }
+}
+function effectiveLang(){
+  return state.selectedLang === "other" ? state.customLang.trim() : state.selectedLang;
+}
+
+/* FILE IO */
+function encodeFileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> {
+      const result = String(reader.result||"");
+      const i = result.indexOf(",");
+      if(i===-1) return reject(new Error("Invalid data URL"));
+      resolve(result.slice(i+1));
+    };
+    reader.onerror = ()=> reject(new Error("Đọc file thất bại"));
+    reader.readAsDataURL(file);
+  });
+}
+function base64ToBlob(b64,mime){
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+  return new Blob([bytes],{type:mime});
+}
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* RENDER */
+function updateDropZone(){
+  if(!dropHeadline || !dropSub) return;
+  if(state.file){
+    dropHeadline.textContent = state.file.name;
+    dropSub.textContent = (state.file.size/1024/1024).toFixed(2) + " MB";
+  } else {
+    dropHeadline.textContent = originalDropText;
+    dropSub.textContent = originalDropSub;
+  }
+}
+
+function render(){
+  // file meta caption
+  if(state.file){
+    fileMeta.textContent = state.file.name + " · " + (state.file.size/1024/1024).toFixed(2) + " MB";
+    fileMeta.classList.remove("is-hidden");
+  } else {
+    fileMeta.textContent = "";
+    fileMeta.classList.add("is-hidden");
+  }
+  updateDropZone();
+  // language UI
+  if(state.selectedLang==="other"){
+    targetCustom.classList.remove("is-hidden");
+    customLabel.classList.remove("is-hidden");
+    targetCustom.required = true;
+  } else {
+    targetCustom.classList.add("is-hidden");
+    customLabel.classList.add("is-hidden");
+    targetCustom.required = false;
+  }
+  // disable during submit
+  const disabled = state.status==="submitting";
+  [fileInput,targetSelect,targetCustom,apiKeyInput,modelInput,demoBtn,byokBtn].forEach(el=>{ if(el) el.disabled=disabled; });
+  // clear status area children
+  while(statusArea.firstChild) statusArea.removeChild(statusArea.firstChild);
+  errorArea.classList.add("is-hidden");
+  errorArea.textContent = "";
+  if(state.status==="submitting"){
+    const line = document.createElement("p");
+    line.className = "status-line status-loading";
+    const modeLabel = state.lastMode === "byok" ? "với key của bạn" : "qua bản demo miễn phí";
+    line.textContent = "Đang dịch " + modeLabel + " …";
+    statusArea.appendChild(line);
+    cancelBtn.classList.remove("is-hidden");
+    retryBtn.classList.add("is-hidden");
+  } else if(state.status==="error"){
+    errorArea.textContent = state.lastError;
+    errorArea.classList.remove("is-hidden");
+    retryBtn.classList.remove("is-hidden");
+    cancelBtn.classList.add("is-hidden");
+  } else if(state.status==="success"){
+    const line = document.createElement("p");
+    line.className = "status-line status-success";
+    line.textContent = "Xong — đang bắt đầu tải xuống.";
+    statusArea.appendChild(line);
+    const tip = document.createElement("p");
+    tip.className = "status-tip";
+    tip.appendChild(document.createTextNode("Nếu nó giúp bạn tiết kiệm thời gian và bạn có khả năng — "));
+    const tipLink = document.createElement("a");
+    tipLink.href = "https://ko-fi.com/nightskat";
+    tipLink.target = "_blank";
+    tipLink.rel = "noopener noreferrer";
+    tipLink.textContent = "một ly cà phê mời mình";
+    tip.appendChild(tipLink);
+    tip.appendChild(document.createTextNode(" sẽ giúp mình tin tưởng hơn vào con đường đã chọn."));
+    statusArea.appendChild(tip);
+    retryBtn.classList.add("is-hidden");
+    cancelBtn.classList.add("is-hidden");
+  } else {
+    retryBtn.classList.add("is-hidden");
+    cancelBtn.classList.add("is-hidden");
+  }
+}
+
+function setState(patch){
+  state = {...state, ...patch};
+  render();
+}
+
+/* EVENTS — file + lang */
+dropZone.addEventListener("click",()=>{ if(state.status!=="submitting") fileInput.click(); });
+dropZone.addEventListener("keydown",e=>{ if(state.status!=="submitting" && (e.key==="Enter"||e.key===" ")){ e.preventDefault(); fileInput.click(); } });
+dropZone.addEventListener("dragover",e=>{ e.preventDefault(); if(state.status!=="submitting") dropZone.classList.add("is-dragover"); });
+dropZone.addEventListener("dragleave",()=>{ dropZone.classList.remove("is-dragover"); });
+dropZone.addEventListener("drop",e=>{
+  e.preventDefault();
+  dropZone.classList.remove("is-dragover");
+  if(state.status==="submitting") return;
+  handleFilesSelection(e.dataTransfer.files);
+});
+fileInput.addEventListener("change",e=>{
+  if(e.target.files.length) handleFilesSelection(e.target.files);
+});
+function handleFilesSelection(fileList){
+  let validFile = null;
+  for(let i=0;i<fileList.length;i++){
+    const err = validateFile(fileList[i]);
+    if(!err && !validFile){ validFile = fileList[i]; break; }
+  }
+  if(!validFile){
+    setState({status:"error",lastError:"Không có file .docx nào hợp lệ.",file:null});
+    return;
+  }
+  setState({file:validFile,status:"idle",lastError:""});
+}
+targetSelect.addEventListener("change",e=>setState({selectedLang:e.target.value, customLang:""}));
+targetCustom.addEventListener("input",e=>setState({customLang:e.target.value}));
+toggleKeyBtn.addEventListener("click",()=>{
+  const hiệning = apiKeyInput.type==="text";
+  apiKeyInput.type = hiệning ? "password" : "text";
+  toggleKeyBtn.textContent = hiệning ? "hiện" : "ẩn";
+  toggleKeyBtn.setAttribute("aria-label", hiệning ? "Hiện API key" : "Ẩn API key");
+});
+clearKeyChk.addEventListener("change",e=>setState({clearKeyOnSubmit:e.target.checked}));
+retryBtn.addEventListener("click",()=>setState({status:"idle",lastError:""}));
+cancelBtn.addEventListener("click",()=>{
+  if(state.abortController){ state.abortController.abort(); }
+  setState({status:"idle",lastError:"Yêu cầu đã bị hủy.", abortController:null});
+});
+
+/* PRIMARY (DEMO) FLOW */
+function preflightPrimary(){
+  if(!state.file){
+    setState({status:"error", lastError:"Choose a .docx file first."});
+    dropZone.focus();
+    return false;
+  }
+  const lang = effectiveLang();
+  const langErr = validateLang(lang);
+  if(langErr){ setState({status:"error", lastError: langErr}); return false; }
+  return true;
+}
+
+function mountTurnstile(){
+  if(turnstileWidgetId !== null) return;
+  if(!window.turnstile){
+    setTimeout(mountTurnstile, 250);
+    return;
+  }
+  turnstileMount.classList.remove("is-hidden");
+  turnstileWidgetId = window.turnstile.render(turnstileMount, {
+    sitekey: TURNSTILE_SITE_KEY,
+    callback: function(token){
+      if(pendingDemoSubmit){
+        pendingDemoSubmit = false;
+        submitDemo(token);
+      }
+    },
+    "error-callback": function(){
+      pendingDemoSubmit = false;
+      setState({status:"error", lastError:"Lỗi tiện ích xác minh — vui lòng thử lại."});
+    },
+    "expired-callback": function(){ /* user must re-verify */ },
+    theme: "auto",
+    size: "normal"
+  });
+}
+
+demoBtn.addEventListener("click", function(){
+  if(state.status === "submitting") return;
+  if(!preflightPrimary()) return;
+  setState({lastMode: "demo"});
+  pendingDemoSubmit = true;
+  if(turnstileWidgetId === null){
+    mountTurnstile();
+  } else if(window.turnstile){
+    window.turnstile.reset(turnstileWidgetId);
+    window.turnstile.execute(turnstileWidgetId);
+  }
+});
+
+async function submitDemo(token){
+  if(!state.file){ setState({status:"error", lastError:"Vui lòng chọn file trước."}); return; }
+  const lang = effectiveLang();
+  setState({status:"submitting", lastError:"", abortController: new AbortController(), lastMode: "demo"});
+  const controller = state.abortController;
+  const timeoutId = setTimeout(()=>controller.abort(), REQUEST_TIMEOUT);
+  const fileSnapshot = state.file;
+  try{
+    const b64 = await encodeFileToBase64(fileSnapshot);
+    const resp = await fetch(DEMO_ENDPOINT, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ docx: b64, targetLang: lang, turnstileToken: token }),
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    if(!resp.ok){
+      let errData = {};
+      try{ errData = await resp.json(); }catch{}
+      let msg = errData.error || "Demo request failed.";
+      if(resp.status === 429) msg = "Đã hết lượt demo hàng ngày (2 file/ngày). Vui lòng dùng key của riêng bạn bên dưới.";
+      else if(resp.status === 503) msg = "Bản demo tạm dừng — đã hết hạn mức AI hàng ngày. Hãy dùng key của riêng bạn.";
+      else if(resp.status === 403) msg = "Kiểm tra bot thất bại — vui lòng thử lại.";
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    if(!data.docx) throw new Error("Phản hồi thiếu file đã dịch.");
+    const blob = base64ToBlob(data.docx, DOCX_MIME);
+    const filename = data.filename || fileSnapshot.name.replace(/\.docx$/i,"") + "_" + lang + ".docx";
+    downloadBlob(blob, filename);
+    setState({status:"success", abortController:null});
+  }catch(err){
+    if(err.name === "AbortError"){
+      setState({status:"error", lastError:"Yêu cầu đã bị hủy.", abortController:null});
+    }else{
+      setState({status:"error", lastError: err.message || "Something went wrong.", abortController:null});
+    }
+  }finally{
+    if(turnstileWidgetId !== null && window.turnstile){
+      try{ window.turnstile.reset(turnstileWidgetId); }catch{}
+    }
+  }
+}
+
+/* BYOK FLOW */
+function preflightByok(){
+  if(!preflightPrimary()) return false;
+  const apiKey = apiKeyInput.value.trim();
+  if(!apiKey){ setState({status:"error", lastError:"Vui lòng nhập API key."}); apiKeyInput.focus(); return false; }
+  return { apiKey };
+}
+
+function mapByokError(status, data){
+  if(status>=500) return "Lỗi máy chủ — vui lòng thử lại.";
+  if(data && typeof data.error==="string"){
+    const known = {
+      "Invalid API key":"API key không hợp lệ.",
+      "Rate limit exceeded":"Vượt quá giới hạn lượt gọi — vui lòng chờ."
+    };
+    return known[data.error]||data.error||"Yêu cầu không hợp lệ.";
+  }
+  return "Lỗi không xác định.";
+}
+
+byokBtn.addEventListener("click", async function(){
+  if(state.status === "submitting") return;
+  const pre = preflightByok();
+  if(!pre) return;
+  const { apiKey } = pre;
+  const lang = effectiveLang();
+  const fileSnapshot = state.file;
+  setState({status:"submitting", lastError:"", abortController: new AbortController(), lastMode: "byok"});
+  const controller = state.abortController;
+  const timeoutId = setTimeout(()=>controller.abort(), REQUEST_TIMEOUT);
+  try{
+    const b64 = await encodeFileToBase64(fileSnapshot);
+    const payload = { docx:b64, targetLang:lang, apiKey, provider:"openrouter", model: modelInput.value.trim() };
+    const resp = await fetch(BYOK_ENDPOINT,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(payload),
+      signal:controller.signal
+    });
+    clearTimeout(timeoutId);
+    if(!resp.ok){
+      let errData = {};
+      try{ errData = await resp.json(); }catch{}
+      throw new Error(mapByokError(resp.status, errData));
+    }
+    let data;
+    try{ data = await resp.json(); }catch{ throw new Error("Phản hồi từ máy chủ không phải JSON hợp lệ."); }
+    if(!data.docx){ throw new Error("Phản hồi thiếu file đã dịch."); }
+    const blob = base64ToBlob(data.docx,DOCX_MIME);
+    const filename = data.filename||fileSnapshot.name.replace(/\.docx$/i,"") + "_" + lang + ".docx";
+    downloadBlob(blob,filename);
+    setState({status:"success", abortController:null});
+  }catch(err){
+    if(err.name==="AbortError"){
+      setState({status:"error", lastError:"Yêu cầu đã bị hủy.", abortController:null});
+    }else{
+      setState({status:"error", lastError: err.message || "Something went wrong.", abortController:null});
+    }
+  }finally{
+    if(state.clearKeyOnSubmit) apiKeyInput.value="";
+  }
+});
+
+/* prevent enter-submit from form (avoid accidental BYOK fire) */
+form.addEventListener("submit", e => e.preventDefault());
+
+async function loadModels(){
+  const select = document.getElementById("model");
+  if(!select) return;
+  let ids = FALLBACK_FREE_MODELS.slice();
+  try{
+    const resp = await fetch(OR_MODELS_URL);
+    if(resp.ok){
+      const data = await resp.json();
+      const all = Array.isArray(data && data.data) ? data.data : [];
+      const free = all
+        .map(m => (m && typeof m.id === "string") ? m.id : null)
+        .filter(id => id && id.endsWith(":free"));
+      if(free.length > 0) ids = free;
+    }
+  } catch(_) { /* keep fallback */ }
+  ids.sort((a, b) => {
+    const aS = BENCH_SCORES[a];
+    const bS = BENCH_SCORES[b];
+    if(aS != null && bS != null) return bS - aS;
+    if(aS != null) return -1;
+    if(bS != null) return 1;
+    return a.localeCompare(b);
+  });
+  while(select.firstChild) select.removeChild(select.firstChild);
+  ids.forEach(id => {
+    const opt = document.createElement("option");
+    opt.value = id;
+    opt.textContent = (BENCH_SCORES[id] != null) ? (id + " · " + BENCH_SCORES[id] + "/5") : id;
+    select.appendChild(opt);
+  });
+}
+
+/* INIT */
+setState({
+  clearKeyOnSubmit: clearKeyChk.checked,
+  selectedLang: targetSelect.value,
+  customLang: ""
+});
+loadModels();
+</script>
+</body>
+</html>

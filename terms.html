@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script>
+(function(){
+  try {
+    var hasRedirected = sessionStorage.getItem('akebi-lang-redirected');
+    var lang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+    if (!hasRedirected && lang.startsWith('vi') && !window.location.pathname.startsWith('/vi')) {
+      sessionStorage.setItem('akebi-lang-redirected', '1');
+      var path = window.location.pathname;
+      var target = '/vi' + (path === '/' ? '/' : path);
+      window.location.replace(target);
+    }
+  } catch(e) { /* ignore storage errors */ }
+})();
+</script>
+<title>Terms · Akebi</title>
+<meta name="description" content="Terms of use for Akebi, the format-preserving DOCX translation tool.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600&family=Noto+Serif+JP:wght@400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+  --font-jp: 'Noto Serif JP', serif;
+  --ink: #1a1814; --ink-soft: #4a463e; --ink-muted: #8a857a;
+  --paper: #faf7f2; --paper-soft: #f4ede0; --rule: #d4cfc4;
+  --akebi: #6b4a8c; --akebi-deep: #3d2a52;
+  --shu: #b91d22; --shu-deep: #7a1216; --sumi: #0f0d0a;
+  --col: min(720px, 92vw); --col-wide: min(880px, 94vw);
+  --gutter: clamp(1.5rem, 4vw, 4rem); --hairline: 1px solid var(--rule);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f0ebe2; --ink-soft: #c4bfb4; --ink-muted: #8a857a;
+    --paper: #14120f; --paper-soft: #1f1c17; --rule: #2d2a24;
+    --akebi: #b48ad6; --akebi-deep: #d4b3ee;
+    --shu: #e54d52; --shu-deep: #ff6f74; --sumi: #f0ebe2;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--paper); color: var(--ink); }
+body { font-family: var(--font-body); font-size: 1.0625rem; line-height: 1.65; color: var(--ink); }
+p, li { color: var(--ink-soft); }
+a { color: var(--shu); text-decoration: none; transition: color .15s; }
+a:hover { color: var(--shu-deep); text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--shu); outline-offset: 2px; }
+em { font-family: var(--font-display); font-style: italic; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+a.skip-link:focus { position: fixed; top: .75rem; left: .75rem; width: auto; height: auto; padding: .5rem .85rem; clip: auto; overflow: visible; white-space: normal; background: var(--ink); color: var(--paper); font-size: .875rem; z-index: 100; border-radius: 2px; }
+header.site { display: flex; align-items: baseline; justify-content: space-between; padding: 1.25rem var(--gutter); max-width: var(--col-wide); margin: 0 auto; }
+.wordmark { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 1.125rem; color: var(--ink); }
+.wordmark .stamp { font-family: var(--font-jp); font-size: .55em; color: var(--shu); margin-left: .2rem; vertical-align: super; letter-spacing: .05em; }
+nav.site { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+nav.site a { font-size: .875rem; color: var(--ink-soft); }
+hr { border: none; border-top: var(--hairline); margin: 0; }
+.page-head { max-width: var(--col); margin: 0 auto; padding: 4rem var(--gutter) 3rem; }
+h1 { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: clamp(2.75rem, 6vw, 5rem); line-height: 1.05; letter-spacing: -.015em; }
+.jp-subhead { display: block; margin-top: .75rem; font-family: var(--font-jp); font-size: .875rem; color: var(--ink-muted); letter-spacing: .15em; }
+.vn { margin-top: 1.25rem; color: var(--ink-muted); }
+section.numbered { padding: 3rem 0; border-top: var(--hairline); }
+.section-grid { max-width: var(--col-wide); margin: 0 auto; padding: 0 var(--gutter); display: grid; grid-template-columns: 5rem 1fr; gap: 2rem; align-items: start; }
+.numeral { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 3.5rem; line-height: 1; color: var(--ink-muted); user-select: none; }
+.section-body { max-width: var(--col); }
+h2 { font-family: var(--font-display); font-style: italic; font-weight: 400; font-size: 1.75rem; line-height: 1.1; margin-bottom: 1.25rem; }
+.section-body > * + * { margin-top: 1rem; }
+ul { padding-left: 1.15rem; }
+li + li { margin-top: .7rem; }
+footer.site { border-top: var(--hairline); padding: 2.25rem var(--gutter); max-width: var(--col-wide); margin: 0 auto; display: flex; justify-content: space-between; gap: 1rem; align-items: center; color: var(--ink-muted); font-size: .875rem; }
+.hanko { display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; background: var(--shu); color: var(--paper); font-family: var(--font-jp); font-weight: 700; font-size: .95rem; outline: 1px solid var(--paper); outline-offset: -3px; }
+@media (max-width: 640px) {
+  header.site, footer.site { align-items: flex-start; flex-direction: column; }
+  .section-grid { grid-template-columns: auto 1fr; gap: .75rem; }
+  .numeral { font-size: 1.25rem; padding-top: .15rem; }
+}
+</style>
+</head>
+<body>
+<a href="#main" class="sr-only skip-link">Skip to main content</a>
+
+<header class="site">
+  <a href="/" class="wordmark">akebi<span class="stamp">木通</span></a>
+  <nav class="site" aria-label="Primary">
+    <a href="/">Landing</a>
+    <a href="/app.html">App</a>
+    <a href="/terms.html" aria-current="page">Terms</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="https://github.com/nightskat/docshift-core">GitHub</a>
+    <a href="/vi/terms.html" style="color: var(--shu);">VI</a>
+  </nav>
+</header>
+<hr>
+
+<main id="main">
+  <div class="page-head">
+    <h1>Terms</h1>
+    <span class="jp-subhead" lang="ja">規約 · kiyaku</span>
+  </div>
+
+  <section class="numbered" aria-labelledby="acceptance">
+    <div class="section-grid">
+      <div class="numeral" aria-hidden="true">01</div>
+      <div class="section-body">
+        <h2 id="acceptance">Acceptance · 同意</h2>
+        <p>By using Akebi, you agree to these terms. Akebi is a format-preserving DOCX translation tool: it separates document text from layout, sends the text through a chosen translation path, and rebuilds the file for download. You remain responsible for the documents you upload, the language model you choose, and how you use the translated result. If these terms do not work for you, do not use the service.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="numbered" aria-labelledby="acceptable-use">
+    <div class="section-grid">
+      <div class="numeral" aria-hidden="true">02</div>
+      <div class="section-body">
+        <h2 id="acceptable-use">Acceptable use · 利用条件</h2>
+        <ul>
+          <li>Do not upload documents containing PII, meaning personally identifiable information.</li>
+          <li>Do not translate copyrighted content unless you have the right to translate it.</li>
+          <li>The demo tier is rate-limited to 2 documents per day per IP and 15MB maximum. Abuse may result in a ban.</li>
+          <li>On the BYOK tier, your API key is your responsibility, including provider rate limits and cost.</li>
+          <li>Do not attempt to reverse-engineer, overload, or bypass the worker.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="numbered" aria-labelledby="no-warranty">
+    <div class="section-grid">
+      <div class="numeral" aria-hidden="true">03</div>
+      <div class="section-body">
+        <h2 id="no-warranty">No warranty · 無保証</h2>
+        <ul>
+          <li>Translation quality depends on the chosen AI model; Akebi does not guarantee accuracy.</li>
+          <li>The service is provided as is, with no SLA or promise of availability.</li>
+          <li>Akebi is not liable for translation errors, lost documents, or downstream consequences.</li>
+          <li>Use Akebi for important documents at your own risk, and always proofread before relying on output.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="numbered" aria-labelledby="license-law">
+    <div class="section-grid">
+      <div class="numeral" aria-hidden="true">04</div>
+      <div class="section-body">
+        <h2 id="license-law">MIT license, governing law · MIT・準拠法</h2>
+        <ul>
+          <li>The code is MIT licensed: <a href="https://github.com/nightskat/docshift-core">github.com/nightskat/docshift-core</a>.</li>
+          <li>Disputes are governed by the jurisdiction of nightskat in Vietnam; Vietnamese law applies.</li>
+          <li>These terms may change. Continued use of Akebi after changes means you accept the updated terms.</li>
+        </ul>
+        <p><em>Last updated: 2026-05-17</em></p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="site">
+  <span>MIT · nightskat · 2026</span>
+  <nav class="footer-links" aria-label="Footer" style="display:flex;gap:1.1rem;flex-wrap:wrap;">
+    <a href="/">Akebi</a>
+    <a href="/app.html">App</a>
+    <a href="https://github.com/nightskat/docshift-core" rel="noopener noreferrer">GitHub</a>
+    <a href="https://github.com/sponsors/nightskat" rel="noopener noreferrer">Sponsors</a>
+    <a href="https://ko-fi.com/nightskat" rel="noopener noreferrer">Ko-fi</a>
+  </nav>
+  <span class="hanko" aria-hidden="true" title="通 — to pass through">通</span>
+</footer>
+<section class="kofi-cta" style="text-align:center; padding:2rem 1rem 3rem; max-width:880px; margin:0 auto;">
+  <a href="https://ko-fi.com/nightskat" target="_blank" rel="noopener noreferrer" style="display:inline-block; padding:0.6rem 1.25rem; background:transparent; color:var(--shu); border:1.5px solid var(--shu); font-family:var(--font-display,Fraunces,serif); font-style:italic; font-size:1rem; border-radius:2px; text-decoration:none; transition:background .15s, color .15s; letter-spacing:0.02em;" onmouseover="this.style.background='var(--shu)'; this.style.color='var(--paper)'" onmouseout="this.style.background='transparent'; this.style.color='var(--shu)'">☕ Tip</a>
+</section>
+
+</body>
+</html>
