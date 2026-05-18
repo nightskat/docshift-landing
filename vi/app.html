@@ -423,6 +423,62 @@ footer.site .motto {
   margin-bottom: 1.25rem;
   font-size: 0.95rem; color: var(--ink-soft);
 }
+.feedback-body label {
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.4rem;
+  font-weight: 400;
+}
+.feedback-body input[type="email"],
+.feedback-body textarea {
+  width: 100%;
+  background: transparent;
+  color: var(--ink);
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 0.5rem 0;
+  font: inherit;
+  font-size: var(--body);
+  transition: border-color .15s;
+}
+.feedback-body input[type="email"]:focus,
+.feedback-body textarea:focus {
+  outline: none;
+  border-bottom-color: var(--shu);
+  box-shadow: none;
+}
+.feedback-body textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: var(--font-body);
+}
+.feedback-body .field-stack > div { margin-bottom: 1.75rem; }
+.feedback-body #fb-submit {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: var(--shu);
+  transition: color .15s;
+}
+.feedback-body #fb-submit::after {
+  content: " →";
+  display: inline-block;
+  transition: margin-left .2s;
+}
+.feedback-body #fb-submit:hover:not(:disabled) { color: var(--shu-deep); }
+.feedback-body #fb-submit:hover:not(:disabled)::after { margin-left: 0.25rem; }
+.feedback-body #fb-submit:disabled { color: var(--ink-muted); cursor: not-allowed; }
+.feedback-body #fb-submit:disabled::after { content: " ⋯"; }
+
 </style>
 </head>
 <body>
@@ -541,10 +597,10 @@ footer.site .motto {
           </div>
           <div>
             <label for="fb-message">Nội dung</label>
-            <textarea id="fb-message" maxlength="2000" required rows="4" style="width:100%;font:inherit;font-size:var(--body);background:var(--paper);color:var(--ink);border:var(--hairline);border-radius:2px;padding:0.65rem 0.85rem;resize:vertical;"></textarea>
+            <textarea id="fb-message" maxlength="2000" required rows="4"></textarea>
           </div>
           <div>
-            <button type="submit" id="fb-submit" class="btn-secondary">Gửi</button>
+            <button type="submit" id="fb-submit">Gửi</button>
             <p id="fb-status" class="caption" style="margin-top:0.75rem;min-height:1.2em;"></p>
           </div>
         </form>
