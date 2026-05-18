@@ -399,6 +399,44 @@ footer.site .motto {
   footer.site { grid-template-columns: 1fr; }
   footer.site .right { justify-content: flex-start; flex-wrap: wrap; }
 }
+
+.feedback-section {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: var(--hairline);
+}
+.feedback-section summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex; align-items: baseline; gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+.feedback-section summary::-webkit-details-marker { display: none; }
+.feedback-section summary::before {
+  content: "▸";
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  display: inline-block;
+  transition: transform .2s;
+}
+.feedback-section[open] summary::before { transform: rotate(90deg); }
+.feedback-section .feedback-title {
+  font-family: var(--font-display); font-style: italic;
+  font-size: 1.25rem; color: var(--ink);
+}
+.feedback-section .feedback-tagline {
+  font-size: 0.875rem; color: var(--ink-muted);
+}
+.feedback-body {
+  margin-top: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--paper-soft);
+}
+.feedback-pitch {
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem; color: var(--ink-soft);
+}
 </style>
 </head>
 <body>
@@ -505,6 +543,30 @@ footer.site .motto {
     </details>
 
     <button type="button" id="cancel-btn" class="cancel-btn is-hidden" style="margin-top:1rem;">Cancel</button>
+    <details class="feedback-section">
+      <summary>
+        <span class="feedback-title">Feedback</span>
+        <span class="feedback-tagline">email required · helps me improve</span>
+      </summary>
+      <div class="feedback-body">
+        <p class="feedback-pitch">Found a bug, weird translation, or just want to say hi? Drop a note. Email required (anti-spam).</p>
+        <form id="feedback-form" class="field-stack">
+          <div>
+            <label for="fb-email">Email <span class="req">required</span></label>
+            <input id="fb-email" type="email" maxlength="200" required autocomplete="email">
+          </div>
+          <div>
+            <label for="fb-message">Message <span class="req">required</span></label>
+            <textarea id="fb-message" maxlength="2000" required rows="4" style="width:100%;font:inherit;font-size:var(--body);background:var(--paper);color:var(--ink);border:var(--hairline);border-radius:2px;padding:0.65rem 0.85rem;resize:vertical;"></textarea>
+          </div>
+          <div>
+            <button type="submit" id="fb-submit" class="btn-secondary">Send</button>
+            <p id="fb-status" class="caption" style="margin-top:0.75rem;min-height:1.2em;"></p>
+          </div>
+        </form>
+      </div>
+    </details>
+
   </form>
 
   <div id="status-area" aria-live="polite"></div>
@@ -953,6 +1015,47 @@ setState({
   customLang: ""
 });
 loadModels();
+/* FEEDBACK FLOW */
+(function(){
+  const FB_ENDPOINT = "https://formspree.io/f/xdajolqq";
+  const fbForm = document.getElementById("feedback-form");
+  if (!fbForm) return;
+  const fbEmail = document.getElementById("fb-email");
+  const fbMsg = document.getElementById("fb-message");
+  const fbSubmit = document.getElementById("fb-submit");
+  const fbStatus = document.getElementById("fb-status");
+  fbForm.addEventListener("submit", async function(e){
+    e.preventDefault();
+    const email = (fbEmail.value || "").trim();
+    const message = (fbMsg.value || "").trim();
+    if (!email || !message) {
+      fbStatus.textContent = "Please fill both fields.";
+      return;
+    }
+    fbSubmit.disabled = true;
+    fbStatus.textContent = "Sending…";
+    try {
+      const resp = await fetch(FB_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email: email, message: message, page: window.location.pathname })
+      });
+      if (resp.ok) {
+        fbStatus.textContent = "Sent. Thanks.";
+        fbForm.reset();
+      } else {
+        let data = {};
+        try { data = await resp.json(); } catch(_){}
+        fbStatus.textContent = (data && data.error) ? data.error : "Failed. Try again.";
+      }
+    } catch(_) {
+      fbStatus.textContent = "Network error. Try again.";
+    } finally {
+      fbSubmit.disabled = false;
+    }
+  });
+})();
+
 </script>
 </body>
 </html>
